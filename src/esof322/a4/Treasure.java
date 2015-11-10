@@ -19,7 +19,14 @@ package esof322.a4;
 
 public class Treasure extends Item
 {
-	public Treasure(String description) {
+	public Treasure(String description)
+	{
 		super(description);
+	}
+
+	@Override
+	public String getName()
+	{
+		return "Treasure";
 	}
 }

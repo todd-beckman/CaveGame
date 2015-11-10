@@ -42,11 +42,13 @@ package esof322.a4;
  * In this version all I/O is through standard I/O; I/O is to and from the console.
  */
 
-public class Adventure {
+public class Adventure
+{
 
     private Room entrance;
 
-    public Room createAdventure() {
+    public Room createAdventure()
+    {
         // The outside:
         Room outside = new Room("You are standing outside, on the edge of a cliff;\n" +
                                " A creek runs alongside the cliff.\n" +
@@ -57,8 +59,8 @@ public class Adventure {
                           + "There is a narrow, dark passage to the east (r1).");
 
         // Connect the outside to Room 1:
-        outside.setSide(5, r1);
-        r1.setSide(4, outside);
+        outside.setSide(Direction.DOWN, r1);
+        r1.setSide(Direction.UP, outside);
         entrance = outside;
 
         // Room 2:
@@ -74,10 +76,10 @@ public class Adventure {
                    + "in the middle of the room (r3).");
 
         // Connect Rooms 1, 2, & 3:
-        r1.setSide(2, r2);
-        r2.setSide(3, r1);
-        r2.setSide(2, r3);
-        r3.setSide(3, r2);
+        r1.setSide(Direction.EAST, r2);
+        r2.setSide(Direction.WEST, r1);
+        r2.setSide(Direction.EAST, r3);
+        r3.setSide(Direction.WEST, r2);
 
         // Room 4:
         Room r4 = new Room("There is what looks like a giant grizzly bear\n"
@@ -98,14 +100,14 @@ public class Adventure {
                    "and a steady dripping from above (r7).");
 
         // Connect rooms 3, 4, 5, 6, & 7.
-        r3.setSide(2, r4);
-        r3.setSide(5, r5);
-        r4.setSide(3, r3);
-        r4.setSide(5, r7);
-        r5.setSide(4, r3);
-        r5.setSide(2, r6);
-        r6.setSide(3, r5);
-        r7.setSide(4, r4);
+        r3.setSide(Direction.EAST, r4);
+        r3.setSide(Direction.DOWN, r5);
+        r4.setSide(Direction.WEST, r3);
+        r4.setSide(Direction.DOWN, r7);
+        r5.setSide(Direction.UP, r3);
+        r5.setSide(Direction.EAST, r6);
+        r6.setSide(Direction.WEST, r5);
+        r7.setSide(Direction.UP, r4);
 
         // Room 8:
         Room r8 = new Room("A lizard scampers past you, or is it a snake?\n" +
@@ -128,12 +130,12 @@ public class Adventure {
         r11.addItem(theTreasure);
 
         // Lets connect them:
-        r4.setSide(0, r8);
-        r8.setSide(1, r4);
-        r8.setSide(3, r9);
-        r8.setSide(2, r10);
-        r9.setSide(2, r8);
-        r10.setSide(3, r8);
+        r4.setSide(Direction.NORTH, r8);
+        r8.setSide(Direction.SOUTH, r4);
+        r8.setSide(Direction.WEST, r9);
+        r8.setSide(Direction.EAST, r10);
+        r9.setSide(Direction.EAST, r8);
+        r10.setSide(Direction.WEST, r8);
 
         // Create a key and put it in r6:
         Key theKey = new Key("A shiny gold key.");
@@ -141,8 +143,8 @@ public class Adventure {
 
         // We add a door between r10 and r11:
         Door theDoor = new Door(r10, r11, theKey);
-        r10.setSide(5, theDoor);
-        r11.setSide(4, theDoor);
+        r10.setSide(Direction.DOWN, theDoor);
+        r11.setSide(Direction.UP, theDoor);
 
         // Now return the entrance:
         entrance = outside;

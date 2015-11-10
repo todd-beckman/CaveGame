@@ -1,5 +1,4 @@
-package e  ]
-		\sof322.a4;
+package esof322.a4;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -55,6 +54,10 @@ public class Player {
         }
     }
 
+    public Item[] getItems() {
+    	return (Item[])inventory.toArray();
+    }
+    
     public boolean hasItem(Item item)
     {
     	return inventory.contains(item);

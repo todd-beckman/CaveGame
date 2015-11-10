@@ -1,5 +1,7 @@
 package esof322.a4;
 
+import java.util.ArrayDeque;
+
 /**
  * Adventure Game Program Code Copyright (c) 1999 James M. Bieman
  *
@@ -20,19 +22,17 @@ package esof322.a4;
  * Luke Welna
  */
 
-import java.util.ArrayList;
-
 public class Room implements CaveSite
 {
     private final String description;
     private CaveSite[] side = new CaveSite[6];
-    private ArrayList<Item> contents = new ArrayList<Item>();
+    private ArrayDeque<Item> contents = new ArrayDeque<Item>();
 
     /**
      * Constructs a Room. This default constructor is not recommended due to excessive memory allocation.
      * @param description The description the player sees upon enterring this room
      */
-    Room(String description)
+    public Room(String description)
     {
     	this.description = description;
         side[Direction.NORTH] = new Wall();
@@ -54,7 +54,7 @@ public class Room implements CaveSite
      * @param up The CaveSite found above this room
      * @param down The CaveSite found below this room
      */
-    Room(String description, CaveSite north, CaveSite east, CaveSite south, CaveSite west, CaveSite up, CaveSite down)
+    public Room(String description, CaveSite north, CaveSite east, CaveSite south, CaveSite west, CaveSite up, CaveSite down)
     {
         side[Direction.NORTH] = north;
         side[Direction.EAST] = east;
@@ -84,11 +84,14 @@ public class Room implements CaveSite
     {
         return contents.isEmpty();
     }
+    
+    public boolean hasItem(Item item)
+    {
+    	return contents.contains(item);
+    }
 
     public Item[] getRoomContents()
     {
-        Item[] contentsArray = new Item[contents.size()];
-        contentsArray = contents.toArray(contentsArray);
         return (Item[])contents.toArray();
     }
 

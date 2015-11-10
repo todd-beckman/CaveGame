@@ -76,12 +76,12 @@ public class AdventureGame
     private InputListener listener;
 
     /** The current player **/
-    private Player thePlayer = new Player();
+    private Player player = new Player();
     
     /** Gets the player of the game **/
     public Player getPlayer()
     {
-        return thePlayer;
+        return player;
     }
     
     /**
@@ -92,24 +92,30 @@ public class AdventureGame
     {
         if (usingKeyboard)
         {
-            try {
+            try
+            {
                 return keyboard.readLine().toLowerCase().charAt(0);
             }
             //  Empty String
-            catch (StringIndexOutOfBoundsException e1) {
+            catch (StringIndexOutOfBoundsException e1)
+            {
                 return ' ';
             }
             //  Buffered Reader fails
-            catch (IOException e) {
+            catch (IOException e)
+            {
                 return ' ';
             }
         }
-        else {
-            try {
+        else
+        {
+            try
+            {
                 return listener.receive().toLowerCase().charAt(0);
             }
             //  Empty String
-            catch (StringIndexOutOfBoundsException e) {
+            catch (StringIndexOutOfBoundsException e)
+            {
                 return ' ';
             }
         }
@@ -118,25 +124,32 @@ public class AdventureGame
      * Force the program to wait for user input. Gets an integer input.
      * @return The user's input or -1 on failure.
      */
-    private int receiveInt() {
+    private int receiveInt()
+    {
         String input;
-        if (usingKeyboard) {
-            try {
+        if (usingKeyboard)
+        {
+            try
+            {
                 input = keyboard.readLine();
             }
             //  Buffered Reader fails
-            catch (IOException e) {
+            catch (IOException e)
+            {
                 return -1;
             }
         }
-        else {
+        else
+        {
             input = listener.receive();
         }
-        try {
+        try
+        {
             return Integer.parseInt(input);
         }
         //  String not a number
-        catch (NumberFormatException e) {
+        catch (NumberFormatException e)
+        {
             return -1;
         }
     }
@@ -144,11 +157,14 @@ public class AdventureGame
     /** Prints a message to the view slot
      * @param message The message to print
      */
-    private void printView(String message) {
-        if (usingKeyboard) {
+    private void printView(String message)
+    {
+        if (usingKeyboard)
+        {
             System.out.println(message);
         }
-        else {
+        else
+        {
             model.setView(message);
         }
     }
@@ -156,11 +172,14 @@ public class AdventureGame
      * Prints a message to the action slot
      * @param message The message to print
      */
-    private void printAction(String message) {
-        if (usingKeyboard) {
+    private void printAction(String message)
+    {
+        if (usingKeyboard)
+        {
             System.out.println(message);
         }
-        else {
+        else
+        {
             model.setAction(message);
         }
     }
@@ -171,20 +190,22 @@ public class AdventureGame
      * Internally, we use integers 0-9 as directions throughout the program. This is a bit of a cludge, but is simpler for now than
      * creating a Direction class. I use this cludge because Java in 1999 did not have an enumerated data type.
      */
-    private int convertDirection(char input) {
-        switch (input) {
-        case 'n':
-            return 0;
-        case 's':
-            return 1;
-        case 'e':
-            return 2;
-        case 'w':
-            return 3;
-        case 'u':
-            return 4;
-        case 'd':
-            return 5;
+    private int convertDirection(char input)
+    {
+        switch (input)
+        {
+        case Command.NORTH:
+            return Direction.NORTH;
+        case Command.EAST:
+        	return Direction.EAST;
+        case Command.SOUTH:
+        	return Direction.SOUTH;
+        case Command.WEST:
+        	return Direction.WEST;
+        case Command.DOWN:
+        	return Direction.DOWN;
+        case Command.UP:
+        	return Direction.UP;
         }
         return -1;
     }
@@ -192,93 +213,120 @@ public class AdventureGame
     /**
      * choosePickupItem determines the specific item that a player wants to pick up.
      */
-    private Item choosePickupItem(Player p) {
-        Item[] contentsArray = (p.getLoc()).getRoomContents();
+    private Item choosePickupItem(Player p)
+    {
+        Item[] contents = (p.getLoc()).getRoomContents();
         int theChoice = -1;
 
-        do {
-            String message = "The room has:\n";
-            for (int i = 0; i < contentsArray.length; i++) {
-                message += (i + 1) + ": "
-                                   + contentsArray[i].getDesc() + "\n";
+        do
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append("The room has:\n");
+            for (int i = 0; i < contents.length; i++)
+            {
+            	sb.append(i + 1);
+            	sb.append(": ");
+            	sb.append(contents[i].getDesc());
+            	sb.append("\n");
             }
-            message += "Enter the number of the item to grab: ";
-            printView(message);
+            sb.append("Enter the number of the item to grab: ");
+            printView(sb.toString());
             theChoice = receiveInt();
-            if (theChoice <= 0 || theChoice > contentsArray.length)
+            if (theChoice <= 0 || theChoice > contents.length)
+            {
                 printView("That item is not in the room.");
-        } while (theChoice <= 0 || theChoice > contentsArray.length);
-        return contentsArray[theChoice - 1];
-
+            }
+        }
+        while (theChoice <= 0 || theChoice > contents.length);
+        return contents[theChoice - 1];
     }
 
     /**
      * chooseDropItem determines the specific item that a player wants to drop
      */
-    private int chooseDropItem(Player p) {
-        int theChoice = -1;
-        do {
-            String message = "You are carrying: " +
-                               p.showInventory() + '\n';
-            message += "Enter the number of the item to drop: ";
-            printView(message);
-            theChoice = receiveInt();
-            if (theChoice <= 0 || theChoice > p.numItemsCarried())
+    private Item chooseDropItem(Player p)
+    {
+        int choice = -1;
+        do
+        {
+        	StringBuilder sb = new StringBuilder();
+        	sb.append("You are carrying: ");
+        	sb.append(p.showInventory());
+        	sb.append("\nEnter the number of the item to drop: ");
+            printView(sb.toString());
+            choice = receiveInt();
+            if (choice <= 0 || choice > p.numItemsCarried())
+            {
                 printView("Invalid choice.");
-        } while (theChoice <= 0 || theChoice > p.numItemsCarried());
+            }
+        }
+        while (choice <= 0 || choice > p.numItemsCarried());
 
-        return theChoice;
+        return (p.getItems())[choice];
     }
     
-    public void startQuest() {
-        thePlayer = new Player();
+    public void startQuest()
+    {
+        player = new Player();
         Adventure theCave = new Adventure();
         Room startRm = theCave.createAdventure();
-        thePlayer.setRoom(startRm);
-        char key = 'p'; //      p for prepare
+        player.setRoom(startRm);
+        char key = 'p'; //  p is completely arbitrary
 
         /* The main query user, get command, interpret, execute cycle. */
-        while (key != 'q') {
+        while (key != Command.QUIT)
+        {
         	//model.setAction("hello" + counter++);
-            printView(thePlayer.look() + "\n\nYou are carrying: " +
-                               thePlayer.showInventory() + '\n');
+            printView(player.look() + "\n\nYou are carrying: " +
+                               player.showInventory() + '\n');
+            
             /* get next move */
             int direction = -1;
+            
             //  We only care about this in keyboard mode
-            if (usingKeyboard) {
+            if (usingKeyboard)
+            {
                 System.out.println("Which way (n,s,e,w,u,d),\n" +
                    " or grab (g) or toss (t) an item,\n" +
                    " or quit (q)?" + '\n');
             }
             key = receiveChar();
             direction = convertDirection(key);
-            if (direction != -1) {
-                printAction(thePlayer.go(direction));
+            if (direction != -1)
+            {
+                printAction(player.go(direction));
             }
             //	Grab item
-            else if (key == 'g') {
-                if (thePlayer.areHandsFull()) {
+            else if (key == 'g')
+            {
+                if (player.areHandsFull())
+                {
                     printAction("Your hands are full.");
                 }
-                else if ((thePlayer.getLoc()).roomEmpty()) {
+                else if ((player.getLoc()).roomEmpty())
+                {
                     printAction("The room is empty.");
                 }
-                else {
+                else
+                {
                     Item itemToGrab =
-                        choosePickupItem(thePlayer);
-                    thePlayer.pickUp(itemToGrab);
-                    (thePlayer.getLoc()).removeItem(itemToGrab);
+                        choosePickupItem(player);
+                    player.pickUp(itemToGrab);
+                    (player.getLoc()).removeItem(itemToGrab);
                     printAction("Grabbed the item " + itemToGrab.getDesc());
                 }
             }
             //  Toss Item
-            else if (key == 't') {
-                if (thePlayer.areHandsEmpty()) {
+            else if (key == 't')
+            {
+                if (player.areHandsEmpty())
+                {
                     printAction("You have nothing to drop.");
                 }
-                else {
-                    int itemToToss = chooseDropItem(thePlayer);
-                    printAction("Dropped "+thePlayer.drop(itemToToss));
+                else
+                {
+                    Item dropItem = chooseDropItem(player);
+                    printAction("Dropped "+player.drop(dropItem));
                 }
             }
         }
@@ -288,7 +336,8 @@ public class AdventureGame
      * Set up a game in which a messaging system will be used
      * @param listener The listener to act as the interface
      */
-    public AdventureGame(AdventureGameModelFacade model, InputListener listener) {
+    public AdventureGame(AdventureGameModelFacade model, InputListener listener)
+    {
         this.model = model;
         this.listener = listener;
         usingKeyboard = false;
@@ -296,13 +345,15 @@ public class AdventureGame
     /**
      * Setup a game in which the keyboard will be used
      */
-    public AdventureGame() {
+    public AdventureGame()
+    {
         keyboard = new BufferedReader(new InputStreamReader(System.in));
         usingKeyboard = true;
     }
 
     public static void main(String args[])
-        throws IOException {
+        throws IOException
+    {
         System.out.println("Welcome to the Adventure Game,\n"
                            + "which is inspired by an old game called the Colossal Cave Adventure.\n"
                            + "Java implementation Copyright (c) 1999 - 2012 by James M. Bieman\n");
