@@ -1,0 +1,16 @@
+.settings/
+bin/
+.project
+.classpath
+*.pdf
+*.xml
+*.jar
+.DS_Store
+src/esof322/a3/
+test/esof322/a3/
+src/esof322/a1/
+test/esof322/a1/
+src/esof322/a2/
+test/esof322/a2/
+src/esof322/a3/
+test/esof322/a3/
