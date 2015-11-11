@@ -3,8 +3,8 @@ package esof322.a4;
 import java.util.ArrayList;
 
 /*
-Save data structure: no spaces except in strings. Commands separated by pipes (|). Arguments separated by colons (:).
-Neither pipes nor colons are allowed in strings.
+Save data structure: no spaces except in strings. Commands separated by ampersands (&). Arguments separated by colons (:).
+Neither ampersands nor colons are allowed in strings.
 
 action:String (the current action string)
 addroom:Wall
@@ -12,7 +12,7 @@ addroom:Room:String (the description)
 
 ----The following cannot be used until all CaveSites in question are added
 addroom:Door:int (into Room's ID):int (from Room's ID):int (Key's ID)
-setside:int (direction, use Direction enum):int (destination CaveSite's ID)
+setside:int (target CaveSite's ID):int (direction, use Direction enum):int (destination CaveSite's ID)
 putitem:Key:int (destination Room's ID)
 putitem:Treasure:int (destination Room's ID):String (description)
 putplayer:int (destination Room's ID)
@@ -47,8 +47,7 @@ public class State
         ArrayList<Item> items = new ArrayList<Item>();
         
         Player player = new Player();
-        
-        String[] data = save.split("|");
+        String[] data = save.split("&");
         for (String line : data)
         {
             String[] lineData = line.split(":");
@@ -83,9 +82,10 @@ public class State
                 break;
                             
             case "setside":
-                ((Room)rooms.get(Integer.parseInt(lineData[1])))
-                    .setSide(Integer.parseInt(lineData[2]),
-                            (Room)rooms.get(Integer.parseInt(lineData[3])));
+                Room from = (Room)rooms.get(Integer.parseInt(lineData[1]));
+                int direction = Integer.parseInt(lineData[2]);
+                CaveSite dest = rooms.get(Integer.parseInt(lineData[3]));
+                from.setSide(direction, dest);
                 break;
             
             case "putitem":
@@ -149,18 +149,18 @@ public class State
             switch (site.getName())
             {
             case "Wall":
-                sb.append("|addroom:Wall");
+                sb.append("&addroom:Wall");
                 break;
                 
             case "Room":
                 Room room = (Room)site;
-                sb.append("|addroom:Room:" + room.getDesc());
+                sb.append("&addroom:Room:" + room.getDesc());
                 rooms.add(room);
                 Item[] items = room.getRoomContents();
                 for (Item item: items)
                 {
                     String name = item.getName();
-                    sb.append("putitem:" + name + ":" + rooms.indexOf(room));
+                    sb.append("&putitem:" + name + ":" + rooms.indexOf(room));
                     if (name.equals("Key"))
                     {
                         keys.add((Key)item);
@@ -179,15 +179,15 @@ public class State
             int into = rooms.indexOf(door.getDestination());
             int from = rooms.indexOf(door.getOrigin());
             int key = keys.indexOf(door.getKey().getID());
-            sb.append("|addroom:" + into + ":" + from + ":" + key);
+            sb.append("&addroom:" + into + ":" + from + ":" + key);
         }
         
-        sb.append("|putplayer:" + rooms.indexOf(player.getLocation()));
+        sb.append("&putplayer:" + rooms.indexOf(player.getLocation()));
         
         for (Item item: player.getItems())
         {
             String name = item.getName();
-            sb.append("|giveplayer:" + name);
+            sb.append("&giveplayer:" + name);
             if (name.equals("Key"))
             {
                 sb.append(":" + ((Key)item).getID());

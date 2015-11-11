@@ -1,5 +1,9 @@
 package esof322.a4;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 /*
  * Todd Beckman
  * Dylan Hills
@@ -49,8 +53,27 @@ public class Adventure
 {
 
     private Room entrance;
-
+    
     public Room createAdventure()
+    {
+        String save = "";
+        try
+        {
+            BufferedReader fr = new BufferedReader(new FileReader("level0.dat"));
+            save = fr.readLine();
+            fr.close();
+        }
+        catch(IOException e)
+        {
+            System.exit(0);
+            return null;
+        }
+        
+        State state = State.generateAdventureFromSave(save);
+        return (Room)(state.rooms[0]);
+    }
+
+    public Room createAdventureOld()
     {
         // The outside:
         Room outside = new Room("You are standing outside, on the edge of a cliff;\n"

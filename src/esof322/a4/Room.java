@@ -124,7 +124,12 @@ public class Room implements CaveSite
     public String getDesc()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append(description);
+        String[] desc = description.split("~");
+        for (String str: desc)
+        {
+            sb.append(str);
+            sb.append("\n");
+        }
         sb.append("\n\nRoom Contents: ");
         for (Item i : contents)
         {
