@@ -288,8 +288,7 @@ public class AdventureGame
     public void startQuest()
     {
         player = new Player();
-        Adventure theCave = new Adventure();
-        Room startRm = theCave.createAdventure();
+        Room startRm = Adventure.createAdventure(Adventure.LEVEL_0);
         player.setRoom(startRm);
         char key = 'p'; // p is completely arbitrary
 
