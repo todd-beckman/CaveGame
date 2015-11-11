@@ -63,29 +63,31 @@ import java.io.InputStreamReader;
  */
 public class AdventureGame
 {
-	int counter = 0;
+    int counter = 0;
     private AdventureGameModelFacade model;
-    
+
     /** Keep track of which type of input to look for */
     private boolean usingKeyboard;
-    
+
     /** Create the keyboard to control the game; we only need one */
     private BufferedReader keyboard;
-    
+
     /** Create the input to control the game; we only need one */
-    private InputListener listener;
+    private SynchronizedMessageHandler listener;
 
     /** The current player **/
     private Player player = new Player();
-    
+
     /** Gets the player of the game **/
     public Player getPlayer()
     {
         return player;
     }
-    
+
     /**
-     * Force the program to wait for user input. Gets the first character of input.
+     * Force the program to wait for user input. Gets the first character of
+     * input.
+     * 
      * @return The user's input or ' ' on failure
      */
     private char receiveChar()
@@ -96,12 +98,12 @@ public class AdventureGame
             {
                 return keyboard.readLine().toLowerCase().charAt(0);
             }
-            //  Empty String
+            // Empty String
             catch (StringIndexOutOfBoundsException e1)
             {
                 return ' ';
             }
-            //  Buffered Reader fails
+            // Buffered Reader fails
             catch (IOException e)
             {
                 return ' ';
@@ -113,15 +115,17 @@ public class AdventureGame
             {
                 return listener.receive().toLowerCase().charAt(0);
             }
-            //  Empty String
+            // Empty String
             catch (StringIndexOutOfBoundsException e)
             {
                 return ' ';
             }
         }
     }
+
     /**
      * Force the program to wait for user input. Gets an integer input.
+     * 
      * @return The user's input or -1 on failure.
      */
     private int receiveInt()
@@ -133,7 +137,7 @@ public class AdventureGame
             {
                 input = keyboard.readLine();
             }
-            //  Buffered Reader fails
+            // Buffered Reader fails
             catch (IOException e)
             {
                 return -1;
@@ -147,15 +151,18 @@ public class AdventureGame
         {
             return Integer.parseInt(input);
         }
-        //  String not a number
+        // String not a number
         catch (NumberFormatException e)
         {
             return -1;
         }
     }
-    
-    /** Prints a message to the view slot
-     * @param message The message to print
+
+    /**
+     * Prints a message to the view slot
+     * 
+     * @param message
+     *            The message to print
      */
     private void printView(String message)
     {
@@ -168,9 +175,12 @@ public class AdventureGame
             model.setView(message);
         }
     }
+
     /**
      * Prints a message to the action slot
-     * @param message The message to print
+     * 
+     * @param message
+     *            The message to print
      */
     private void printAction(String message)
     {
@@ -183,12 +193,13 @@ public class AdventureGame
             model.setAction(message);
         }
     }
-    
-    
+
     /**
-     * Our system-wide internal representation of directions is integers. Here, we convert input string directions into integers.
-     * Internally, we use integers 0-9 as directions throughout the program. This is a bit of a cludge, but is simpler for now than
-     * creating a Direction class. I use this cludge because Java in 1999 did not have an enumerated data type.
+     * Our system-wide internal representation of directions is integers. Here,
+     * we convert input string directions into integers. Internally, we use
+     * integers 0-9 as directions throughout the program. This is a bit of a
+     * cludge, but is simpler for now than creating a Direction class. I use
+     * this cludge because Java in 1999 did not have an enumerated data type.
      */
     private int convertDirection(char input)
     {
@@ -197,48 +208,52 @@ public class AdventureGame
         case Command.NORTH:
             return Direction.NORTH;
         case Command.EAST:
-        	return Direction.EAST;
+            return Direction.EAST;
         case Command.SOUTH:
-        	return Direction.SOUTH;
+            return Direction.SOUTH;
         case Command.WEST:
-        	return Direction.WEST;
+            return Direction.WEST;
         case Command.DOWN:
-        	return Direction.DOWN;
+            return Direction.DOWN;
         case Command.UP:
-        	return Direction.UP;
+            return Direction.UP;
         }
         return -1;
     }
 
     /**
-     * choosePickupItem determines the specific item that a player wants to pick up.
+     * choosePickupItem determines the specific item that a player wants to pick
+     * up.
      */
-    private Item choosePickupItem(Player p)
+    private Item choosePickupItem(Player player)
     {
-        Item[] contents = (p.getLoc()).getRoomContents();
-        int theChoice = -1;
-
-        do
+        if (usingKeyboard)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.append("The room has:\n");
-            for (int i = 0; i < contents.length; i++)
+            Item[] contents = (player.getLocation()).getRoomContents();
+            int choice = -1;
+
+            do
             {
-            	sb.append(i + 1);
-            	sb.append(": ");
-            	sb.append(contents[i].getDesc());
-            	sb.append("\n");
+                StringBuilder sb = new StringBuilder();
+                sb.append("The room has:\n");
+                for (int i = 0; i < contents.length; i++)
+                {
+                    sb.append(i + ": ");
+                    sb.append(contents[i].getDesc());
+                    sb.append("\n");
+                }
+                sb.append("Enter the number of the item to grab: ");
+                printView(sb.toString());
+                choice = receiveInt();
+                if (choice < 0 || choice > contents.length)
+                {
+                    printView("That item is not in the room.");
+                }
             }
-            sb.append("Enter the number of the item to grab: ");
-            printView(sb.toString());
-            theChoice = receiveInt();
-            if (theChoice <= 0 || theChoice > contents.length)
-            {
-                printView("That item is not in the room.");
-            }
+            while (choice < 0 || choice > contents.length);
+            return contents[choice];
         }
-        while (theChoice <= 0 || theChoice > contents.length);
-        return contents[theChoice - 1];
+        return model.getItemChoice(player);
     }
 
     /**
@@ -247,48 +262,51 @@ public class AdventureGame
     private Item chooseDropItem(Player p)
     {
         int choice = -1;
+        Item[] contents = p.getItems();
         do
         {
-        	StringBuilder sb = new StringBuilder();
-        	sb.append("You are carrying: ");
-        	sb.append(p.showInventory());
-        	sb.append("\nEnter the number of the item to drop: ");
+            StringBuilder sb = new StringBuilder();
+            sb.append("You are carrying:\n");
+            for (int i = 0; i < contents.length; i++)
+            {
+                sb.append(i + ": ");
+                sb.append(contents[i].getDesc());
+            }
+            sb.append("\nEnter the number of the item to drop: ");
             printView(sb.toString());
             choice = receiveInt();
-            if (choice <= 0 || choice > p.numItemsCarried())
+            if (choice < 0 || choice > p.numItemsCarried())
             {
                 printView("Invalid choice.");
             }
         }
-        while (choice <= 0 || choice > p.numItemsCarried());
+        while (choice < 0 || choice > p.numItemsCarried());
 
         return (p.getItems())[choice];
     }
-    
+
     public void startQuest()
     {
         player = new Player();
         Adventure theCave = new Adventure();
         Room startRm = theCave.createAdventure();
         player.setRoom(startRm);
-        char key = 'p'; //  p is completely arbitrary
+        char key = 'p'; // p is completely arbitrary
 
         /* The main query user, get command, interpret, execute cycle. */
         while (key != Command.QUIT)
         {
-        	//model.setAction("hello" + counter++);
-            printView(player.look() + "\n\nYou are carrying: " +
-                               player.showInventory() + '\n');
-            
+            // model.setAction("hello" + counter++);
+            printView(player.look() + "\n\nYou are carrying: " + player.showInventory() + '\n');
+
             /* get next move */
             int direction = -1;
-            
-            //  We only care about this in keyboard mode
+
+            // We only care about this in keyboard mode
             if (usingKeyboard)
             {
-                System.out.println("Which way (n,s,e,w,u,d),\n" +
-                   " or grab (g) or toss (t) an item,\n" +
-                   " or quit (q)?" + '\n');
+                System.out.println(
+                        "Which way (n,s,e,w,u,d),\n" + " or grab (g) or toss (t) an item,\n" + " or quit (q)?" + '\n');
             }
             key = receiveChar();
             direction = convertDirection(key);
@@ -296,52 +314,63 @@ public class AdventureGame
             {
                 printAction(player.go(direction));
             }
-            //	Grab item
-            else if (key == 'g')
+            // Grab item
+            else
             {
-                if (player.areHandsFull())
+                if (key == Command.GRAB)
                 {
-                    printAction("Your hands are full.");
+                    if (player.areHandsFull())
+                    {
+                        printAction("Your hands are full. Try getting rid of something.");
+                    }
+                    else
+                        if ((player.getLocation()).roomEmpty())
+                        {
+                            printAction("The room is empty.");
+                        }
+                        else
+                        {
+                            Item grabItem = choosePickupItem(player);
+                            player.pickUp(grabItem);
+                            (player.getLocation()).removeItem(grabItem);
+                            printAction("Grabbed the item " + grabItem.getDesc());
+                        }
                 }
-                else if ((player.getLoc()).roomEmpty())
-                {
-                    printAction("The room is empty.");
-                }
+                // Toss Item
                 else
                 {
-                    Item itemToGrab =
-                        choosePickupItem(player);
-                    player.pickUp(itemToGrab);
-                    (player.getLoc()).removeItem(itemToGrab);
-                    printAction("Grabbed the item " + itemToGrab.getDesc());
-                }
-            }
-            //  Toss Item
-            else if (key == 't')
-            {
-                if (player.areHandsEmpty())
-                {
-                    printAction("You have nothing to drop.");
-                }
-                else
-                {
-                    Item dropItem = chooseDropItem(player);
-                    printAction("Dropped "+player.drop(dropItem));
+                    if (key == Command.DROP)
+                    {
+                        if (player.areHandsEmpty())
+                        {
+                            printAction("You have nothing to drop.");
+                        }
+                        else
+                        {
+                            Item dropItem = chooseDropItem(player);
+                            printAction("Dropped " + player.drop(dropItem));
+                        }
+                    }
                 }
             }
         }
+        printAction("Bye! Have a very good time!");
 
     }
+
     /**
      * Set up a game in which a messaging system will be used
-     * @param listener The listener to act as the interface
+     * 
+     * @param messenger
+     *            The listener to act as the interface
      */
-    public AdventureGame(AdventureGameModelFacade model, InputListener listener)
+    public AdventureGame(AdventureGameModelFacade model, SynchronizedMessageHandler messenger)
     {
         this.model = model;
-        this.listener = listener;
+        this.listener = messenger;
         usingKeyboard = false;
     }
+
     /**
      * Setup a game in which the keyboard will be used
      */
@@ -351,12 +380,11 @@ public class AdventureGame
         usingKeyboard = true;
     }
 
-    public static void main(String args[])
-        throws IOException
+    public static void main(String args[]) throws IOException
     {
         System.out.println("Welcome to the Adventure Game,\n"
-                           + "which is inspired by an old game called the Colossal Cave Adventure.\n"
-                           + "Java implementation Copyright (c) 1999 - 2012 by James M. Bieman\n");
+                + "which is inspired by an old game called the Colossal Cave Adventure.\n"
+                + "Java implementation Copyright (c) 1999 - 2012 by James M. Bieman\n");
         AdventureGame theGame = new AdventureGame();
         theGame.startQuest();
     }

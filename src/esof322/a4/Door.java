@@ -10,43 +10,69 @@ package esof322.a4;
 
 // class Door
 /*
- * Todd Beckman
- * Dylan Hills
- * Kalvyn Lu
- * Luke O'Neill
- * Luke Welna
+ * Todd Beckman Dylan Hills Kalvyn Lu Luke O'Neill Luke Welna
  */
 
-public class Door implements CaveSite {
+public class Door implements CaveSite
+{
     /**
-     * In this implementation doors are always locked. A player must have the correct key to get through a door. Doors automatically
-     * lock after a player passes through.
+     * In this implementation doors are always locked. A player must have the
+     * correct key to get through a door. Doors automatically lock after a
+     * player passes through.
      */
-    private Key myKey;
+    private Key key;
 
     /** The door's location. */
     private CaveSite outSite;
     private CaveSite inSite;
+    
+    private int id;
 
     /** We can construct a door at the site. */
     Door(CaveSite out, CaveSite in, Key k)
     {
         outSite = out;
         inSite = in;
-        myKey = k;
+        key = k;
+        key.getID();
+    }
+    
+    public int getID()
+    {
+        return id;
+    }
+    
+    public CaveSite getOrigin()
+    {
+        return inSite;
+    }
+    
+    public Key getKey()
+    {
+        return key;
+    }
+    
+    public CaveSite getDestination()
+    {
+        return outSite;
+    }
+    
+    public String getName()
+    {
+        return "Door";
     }
 
     public String enter(Player player)
     {
-        if (player.hasItem(myKey))
+        if (player.hasItem(key))
         {
             String output = "Your key works! The door creaks open,\nand slams behind you after you pass through.";
-            if (player.getLoc() == outSite)
+            if (player.getLocation() == outSite)
             {
                 inSite.enter(player);
                 return output;
             }
-            if (player.getLoc() == inSite)
+            if (player.getLocation() == inSite)
             {
                 outSite.enter(player);
                 return output;
@@ -55,7 +81,7 @@ public class Door implements CaveSite {
         }
         else
         {
-        	return "You don't have the key for this door! \n Sorry.";
+            return "You don't have the key for this door! \n Sorry.";
         }
     }
 

@@ -8,34 +8,39 @@ package esof322.a4;
  * Luke Welna
  */
 /**
- * Todd Beckman:
- * Input Listener
- * Provides a synchronized messaging system that allows for input to be sent and received in parallel
+ * Todd Beckman: Input Listener Provides a synchronized messaging system that
+ * allows for input to be sent and received in parallel
  */
-public class InputListener {
+public class SynchronizedMessageHandler
+{
     Object listenObject = new Object();
     Object intListenObject = new Object();
-    
+
     /**
      * The message that is being sent
      */
     private String message;
-    
+
     private Integer intMessage;
-    
+
     /**
-     * Constructs a listener. Only one should be needed unless parallel input is expected.
+     * Constructs a listener. Only one should be needed unless parallel input is
+     * expected.
      */
-    InputListener() {}
+    SynchronizedMessageHandler()
+    {
+    }
 
     /**
      * Receive a string of input.
-     * @param listener The object that is to be synchronized in waiting
+     * 
+     * @param listener
+     *            The object that is to be synchronized in waiting
      * @return The message that is finally received.
      */
     public String receive()
     {
-        synchronized(listenObject)
+        synchronized (listenObject)
         {
             try
             {
@@ -45,33 +50,49 @@ public class InputListener {
                     listenObject.wait();
                 }
             }
-            catch (InterruptedException e) {}
+            catch (InterruptedException e)
+            {
+            }
         }
         return message;
     }
-    
+
     /**
      * Send a message to the listener, if it is listening.
-     * @param message The message to send
+     * 
+     * @param message
+     *            The message to send
      */
     public void send(String message)
     {
-        //  Alert the listener it is ready
-        synchronized(listenObject)
+        // Alert the listener it is ready
+        synchronized (listenObject)
         {
             this.message = message;
             listenObject.notifyAll();
         }
     }
-    
+
+    /**
+     * An alias of send(String)
+     * 
+     * @param c
+     */
+    public void send(char c)
+    {
+        send("" + c);
+    }
+
     /**
      * Receive an integer of input.
-     * @param listener The object that is to be synchronized in waiting
+     * 
+     * @param listener
+     *            The object that is to be synchronized in waiting
      * @return The message that is finally received.
      */
-    public int receiveInt ()
+    public int receiveInt()
     {
-        synchronized(intListenObject)
+        synchronized (intListenObject)
         {
             try
             {
@@ -81,19 +102,23 @@ public class InputListener {
                     intListenObject.wait();
                 }
             }
-            catch (InterruptedException e) {}
+            catch (InterruptedException e)
+            {
+            }
         }
         return intMessage;
     }
-    
+
     /**
      * Send a message to the listener, if it is listening.
-     * @param message The message to send
+     * 
+     * @param message
+     *            The message to send
      */
     public void sendInt(int intMessage)
     {
-        //  Alert the listener it is ready
-        synchronized(listenObject)
+        // Alert the listener it is ready
+        synchronized (listenObject)
         {
             this.intMessage = intMessage;
             listenObject.notifyAll();

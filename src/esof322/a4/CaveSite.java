@@ -10,16 +10,13 @@ package esof322.a4;
 
 // interface CaveSite
 /*
- * Todd Beckman
- * Dylan Hills
- * Kalvyn Lu
- * Luke O'Neill
- * Luke Welna
+ * Todd Beckman Dylan Hills Kalvyn Lu Luke O'Neill Luke Welna
  */
 /*
  * Dylan Hills: enter() now returns string
  */
-public interface CaveSite {
+public interface CaveSite
+{
     String enter(Player p);
+    String getName();
 }
-

@@ -10,15 +10,16 @@ package esof322.a4;
 
 // class Wall
 /*
- * Todd Beckman
- * Dylan Hills
- * Kalvyn Lu
- * Luke O'Neill
- * Luke Welna
+ * Todd Beckman Dylan Hills Kalvyn Lu Luke O'Neill Luke Welna
  */
 
 public class Wall implements CaveSite
 {
+    public String getName()
+    {
+        return "Wall";
+    }
+    
     public String enter(Player p)
     {
         return "Ouch! That hurts.";

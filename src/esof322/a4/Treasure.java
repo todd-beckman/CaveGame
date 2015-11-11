@@ -10,23 +10,19 @@ package esof322.a4;
 
 // class Treasure
 /*
- * Todd Beckman
- * Dylan Hills
- * Kalvyn Lu
- * Luke O'Neill
- * Luke Welna
+ * Todd Beckman Dylan Hills Kalvyn Lu Luke O'Neill Luke Welna
  */
 
 public class Treasure extends Item
 {
-	public Treasure(String description)
-	{
-		super(description);
-	}
+    public Treasure(String description)
+    {
+        super(description);
+    }
 
-	@Override
-	public String getName()
-	{
-		return "Treasure";
-	}
+    @Override
+    public String getName()
+    {
+        return "Treasure";
+    }
 }

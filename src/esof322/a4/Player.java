@@ -12,19 +12,17 @@ import java.util.ArrayList;
  **/
 
 /*
- * Todd Beckman
- * Dylan Hills
- * Kalvyn Lu
- * Luke O'Neill
- * Luke Welna
+ * Todd Beckman Dylan Hills Kalvyn Lu Luke O'Neill Luke Welna
  */
 /*
- * Dylan Hills: drop() and go() now return strings of the item and the room respectively.
+ * Dylan Hills: drop() and go() now return strings of the item and the room
+ * respectively.
  */
-public class Player {
+public class Player
+{
     private Room myLoc;
     private ArrayDeque<Item> inventory = new ArrayDeque<Item>(MAXIMUM_ITEM_COUNT);
-    
+
     /**
      * The maximum number of items a player is allowed to hold
      */
@@ -47,29 +45,30 @@ public class Player {
 
     public void pickUp(Item item)
     {
-    	if (myLoc.hasItem(item) && inventory.size() < MAXIMUM_ITEM_COUNT)
+        if (myLoc.hasItem(item) && inventory.size() < MAXIMUM_ITEM_COUNT)
         {
-        	inventory.add(item);
+            inventory.add(item);
             myLoc.removeItem(item);
         }
     }
 
-    public Item[] getItems() {
-    	return (Item[])inventory.toArray();
+    public Item[] getItems()
+    {
+        return inventory.toArray(new Item[0]);
     }
-    
+
     public boolean hasItem(Item item)
     {
-    	return inventory.contains(item);
+        return inventory.contains(item);
     }
-    
+
     public String drop(Item item)
     {
-    	if (inventory.contains(item))
-    	{
-    		myLoc.addItem(item);
-    		inventory.remove(item);
-    		return item.getDesc();
+        if (inventory.contains(item))
+        {
+            myLoc.addItem(item);
+            inventory.remove(item);
+            return item.getDesc();
         }
         return "";
     }
@@ -79,21 +78,21 @@ public class Player {
         myLoc = r;
     }
 
-    public Room getLoc()
+    public Room getLocation()
     {
         return myLoc;
     }
 
     public String showInventory()
     {
-    	StringBuilder sb = new StringBuilder();
-    	for (Item item: inventory)
-    	{
-    		sb.append(item.getName());
-    		sb.append(": ");
-    		sb.append(item.getDesc());
-    		sb.append("\n");
-    	}
+        StringBuilder sb = new StringBuilder();
+        for (Item item : inventory)
+        {
+            sb.append(item.getName());
+            sb.append(": ");
+            sb.append(item.getDesc());
+            sb.append("\n");
+        }
         return sb.toString();
     }
 

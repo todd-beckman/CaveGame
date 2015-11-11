@@ -10,24 +10,23 @@ package esof322.a4;
 
 // class Item
 /*
- * Todd Beckman
- * Dylan Hills
- * Kalvyn Lu
- * Luke O'Neill
- * Luke Welna
+ * Todd Beckman Dylan Hills Kalvyn Lu Luke O'Neill Luke Welna
  */
 
-public abstract class Item {
+public abstract class Item
+{
 
     private final String description;
-    
-    public Item (String description) {
-    	this.description = description;
+
+    public Item(String description)
+    {
+        this.description = description;
     }
-    
+
     public abstract String getName();
 
-    public String getDesc() {
+    public String getDesc()
+    {
         return description;
     }
 

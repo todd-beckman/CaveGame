@@ -10,21 +10,33 @@ package esof322.a4;
 
 // class Key.
 /*
- * Todd Beckman
- * Dylan Hills
- * Kalvyn Lu
- * Luke O'Neill
- * Luke Welna
+ * Todd Beckman Dylan Hills Kalvyn Lu Luke O'Neill Luke Welna
  */
 
-public class Key extends Item {
+public class Key extends Item
+{
+    private int id;
+    
+    public Key(String description, int id)
+    {
+        super(description);
+        this.id = id;
+    }
+    
+    public Key(String description)
+    {
+        super(description);
+        this.id = 0;
+    }
 
-	public Key(String description) {
-		super(description);
-	}
-	
-	@Override
-	public String getName() {
-		return "Key";
-	}
+    @Override
+    public String getName()
+    {
+        return "Key";
+    }
+    
+    public int getID()
+    {
+        return id;
+    }
 }

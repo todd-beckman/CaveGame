@@ -2,7 +2,14 @@ package esof322.a4;
 
 import BreezySwing.GBFrame;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
@@ -20,18 +27,13 @@ import javax.swing.JTextArea;
  */
 public class AdventureGameView extends GBFrame
 {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
-// Window objects --------------------------------------
-    JLabel welcomeLabel =
-        addLabel("Welcome to the Adventure Game " +
-                 "(inspired by an old game called the Colossal Cave Adventure)." +
-                 " Java implementation Copyright (c) 1999-2012 by James M. Bieman",
-                 1, 1, 5, 1);
+    // Window objects --------------------------------------
+    JLabel welcomeLabel = addLabel(
+            "Welcome to the Adventure Game " + "(inspired by an old game called the Colossal Cave Adventure)."
+                    + " Java implementation Copyright (c) 1999-2012 by James M. Bieman",
+            1, 1, 5, 1);
 
     JLabel viewLabel = addLabel("Your View: ", 2, 1, 1, 1);
     JTextArea viewArea = addTextArea("Start", 3, 1, 3, 7);
@@ -39,14 +41,11 @@ public class AdventureGameView extends GBFrame
     JLabel carryingLabel = addLabel("You are carrying: ", 6, 4, 1, 1);
     JTextArea carryingArea = addTextArea("Nothing", 7, 4, 3, 3);
 
-    JLabel actionLabel = addLabel("Action:",2,4,1,1);
-    JTextArea actionArea = addTextArea("Action",3,4,3,3);
-    JLabel separator1 = addLabel
-        ("-----------------------------------------------------------------"
-         , 10, 1, 4, 1);
+    JLabel actionLabel = addLabel("Action:", 2, 4, 1, 1);
+    JTextArea actionArea = addTextArea("Action", 3, 4, 3, 3);
+    JLabel separator1 = addLabel("-----------------------------------------------------------------", 10, 1, 4, 1);
 
-    JLabel choiceLabel = addLabel
-        ("Choose a direction, pick-up, or drop an item", 11, 1, 5, 1);
+    JLabel choiceLabel = addLabel("Choose a direction, pick-up, or drop an item", 11, 1, 5, 1);
 
     JButton grabButton = addButton("Grab an item", 12, 5, 1, 1);
     JButton dropButton = addButton("Drop an item", 13, 5, 1, 1);
@@ -57,9 +56,15 @@ public class AdventureGameView extends GBFrame
     JButton westButton = addButton("West", 13, 1, 1, 1);
     JButton upButton = addButton("Up", 12, 3, 1, 1);
     JButton downButton = addButton("Down", 14, 3, 1, 1);
-    
-    JTextArea textInput = addTextArea("1",15,3,1,1);
-    JButton textInputButton = addButton("Submit",15,4,1,1);
+
+    JTextArea textInput = addTextArea("1", 15, 3, 1, 1);
+    JButton textInputButton = addButton("Submit", 15, 4, 1, 1);
+
+    // Used for item dialogue
+    JFrame popup;
+    JComboBox<String> itemBox;
+    JButton itemSelectButton;
+    Item item;
 
     AdventureGameModelFacade model;
 
@@ -72,49 +77,120 @@ public class AdventureGameView extends GBFrame
 
         viewArea.setEditable(false);
         carryingArea.setEditable(false);
+
+        addKeyListener(new KeyListener()
+        {
+            public void keyPressed(KeyEvent e)
+            {
+            }
+
+            public void keyReleased(KeyEvent e)
+            {
+            }
+
+            // Only care about keys typed for now
+            public void keyTyped(KeyEvent e)
+            {
+                switch (e.getKeyCode())
+                {
+                case KeyEvent.VK_UP:
+                case KeyEvent.VK_W:
+                    model.goNorth();
+                    break;
+
+                case KeyEvent.VK_DOWN:
+                case KeyEvent.VK_S:
+                    model.goSouth();
+                    break;
+
+                case KeyEvent.VK_RIGHT:
+                case KeyEvent.VK_D:
+                    model.goEast();
+                    break;
+
+                case KeyEvent.VK_LEFT:
+                case KeyEvent.VK_A:
+                    model.goWest();
+                    break;
+
+                case KeyEvent.VK_R:
+                    model.goUp();
+                    break;
+
+                case KeyEvent.VK_F:
+                    model.goDown();
+                    break;
+
+                case KeyEvent.VK_G:
+                    model.grab();
+                    break;
+
+                case KeyEvent.VK_T:
+                    model.drop();
+                    break;
+                }
+            }
+
+        });
+
+        // default:
+        // if (buttonObj == textInputButton)
+        // {
+        // model.takeInput(textInput.getText());
+        // textInput.replaceRange("", 0, textInput.getText().length());
+        // }
+        // break;
+        // }
     }
 
-    // buttonClicked method--------------------------------------
-
-    public void buttonClicked (JButton buttonObj)
+    public Item getItemChoice(Item[] inventory)
     {
-    	//	Because whoever made those if/else blocks should be fired
-    	switch (buttonObj.getName()){
-    	case "Up":
-        	model.goUp();
-        	break;
-    	case "Down":
-    		model.goDown();
-    		break;
-    	case "North":
-    		model.goNorth();
-    		break;
-    	case "East":
-    		model.goEast();
-    		break;
-    	case "South":
-    		model.goSouth();
-    		break;
-    	case "West":
-    		model.goSouth();
-    		break;
-    	case "Grab an item":
-    		model.grab();
-    		break;
-    	case "Drop an item":
-    		model.drop();
-    		break;
-		default:
-	        if (buttonObj == textInputButton)
-	        {
-	            model.takeInput(textInput.getText());
-	            textInput.replaceRange("", 0, textInput.getText().length());
-	        }
-	        break;
-    	}
-    }
+        popup.setSize(300, 200);
 
-    // Private methods-------------------------------------------
+        String[] names = new String[inventory.length];
+        for (int i = 0; i < inventory.length; i++)
+        {
+            names[i] = inventory[i].getName() + ": " + inventory[i].getDesc();
+        }
+        itemBox = new JComboBox<String>(names);
+
+        popup = new JFrame("Choose an item");
+
+        popup.add(itemBox);
+        item = null;
+
+        itemSelectButton = new JButton("This one!");
+        itemSelectButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent arg0)
+            {
+                int index = itemBox.getSelectedIndex();
+                item = inventory[index];
+            }
+        });
+
+        popup.add(itemSelectButton);
+        popup.setVisible(true);
+
+        synchronized (popup)
+        {
+            try
+            {
+                while (item == null)
+                {
+                    this.wait();
+                }
+            }
+            catch (InterruptedException e)
+            {
+            }
+        }
+
+        popup.setVisible(false);
+        popup = null;
+        return item;
+    }
 
     public void displayCurrentInfo()
     {
@@ -125,7 +201,7 @@ public class AdventureGameView extends GBFrame
 
     public void startQuest()
     {
-    	model.setGUI(this);
+        model.setGUI(this);
         model.startQuest();
     }
 

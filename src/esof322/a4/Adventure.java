@@ -31,15 +31,18 @@ package esof322.a4;
  **/
 
 /**
- * class Adventure: Primary method, createCave, creates the cave system. It eventually be replaced with a more flexible mechanism to
- * support input and output from devices other than an ASCII terminal.
+ * class Adventure: Primary method, createCave, creates the cave system. It
+ * eventually be replaced with a more flexible mechanism to support input and
+ * output from devices other than an ASCII terminal.
  *
- * Room descriptions are followed by a room identifier, to ease debugging and testing. These would be removed to help confuse the
- * user, which is our ultimate aim.
+ * Room descriptions are followed by a room identifier, to ease debugging and
+ * testing. These would be removed to help confuse the user, which is our
+ * ultimate aim.
  *
  * I haven't added all of the room descriptions. They will be done later.
  *
- * In this version all I/O is through standard I/O; I/O is to and from the console.
+ * In this version all I/O is through standard I/O; I/O is to and from the
+ * console.
  */
 
 public class Adventure
@@ -50,13 +53,12 @@ public class Adventure
     public Room createAdventure()
     {
         // The outside:
-        Room outside = new Room("You are standing outside, on the edge of a cliff;\n" +
-                               " A creek runs alongside the cliff.\n" +
-                               "a cave opens straight down (outside).");
+        Room outside = new Room("You are standing outside, on the edge of a cliff;\n"
+                + " A creek runs alongside the cliff.\n" + "a cave opens straight down (outside).");
 
         // Room 1:
         Room r1 = new Room("The darkness is pierced by a bright light overhead.\n"
-                          + "There is a narrow, dark passage to the east (r1).");
+                + "There is a narrow, dark passage to the east (r1).");
 
         // Connect the outside to Room 1:
         outside.setSide(Direction.DOWN, r1);
@@ -64,16 +66,14 @@ public class Adventure
         entrance = outside;
 
         // Room 2:
-        Room r2 = new Room("You are in a gloomy oval shaped room with grey walls.\n" +
-                          "There is a dim light to the west, and a narrow\n" +
-                          "dark hole to the east only about 18 inches high (r2).");
+        Room r2 = new Room("You are in a gloomy oval shaped room with grey walls.\n"
+                + "There is a dim light to the west, and a narrow\n"
+                + "dark hole to the east only about 18 inches high (r2).");
 
         // Room 3:
-        Room r3 = new Room("You really need your flashlight here. \n" +
-                   "There is a wide passage that quickly narrows\n"
-                   + "to the west, a bright opening to the east,\n"
-                   + "and a deep hole that appears to have no bottom\n"
-                   + "in the middle of the room (r3).");
+        Room r3 = new Room("You really need your flashlight here. \n" + "There is a wide passage that quickly narrows\n"
+                + "to the west, a bright opening to the east,\n" + "and a deep hole that appears to have no bottom\n"
+                + "in the middle of the room (r3).");
 
         // Connect Rooms 1, 2, & 3:
         r1.setSide(Direction.EAST, r2);
@@ -82,22 +82,21 @@ public class Adventure
         r3.setSide(Direction.WEST, r2);
 
         // Room 4:
-        Room r4 = new Room("There is what looks like a giant grizzly bear\n"
-                   + "skull in a corner.  A passage leads to the west,\n"
-                   + "another one to the north, and a slippery route\n"
-                   + "goes down steeply. You can hear the shrieks of bats (r4).");
+        Room r4 = new Room(
+                "There is what looks like a giant grizzly bear\n" + "skull in a corner.  A passage leads to the west,\n"
+                        + "another one to the north, and a slippery route\n"
+                        + "goes down steeply. You can hear the shrieks of bats (r4).");
 
         // Room 5:
         Room r5 = new Room("There is a dim light from above and the shrieks\n"
-                   + "are clearly coming from a passageway to the east (r5).");
+                + "are clearly coming from a passageway to the east (r5).");
 
         // Room 6:
-        Room r6 = new Room("The ceiling is full of bats.\n"
-                   + "You should put your hat on your head (r6).");
+        Room r6 = new Room("The ceiling is full of bats.\n" + "You should put your hat on your head (r6).");
 
         // Room 7:
-        Room r7 = new Room("This room is very damp. There are puddles on the floor\n" +
-                   "and a steady dripping from above (r7).");
+        Room r7 = new Room(
+                "This room is very damp. There are puddles on the floor\n" + "and a steady dripping from above (r7).");
 
         // Connect rooms 3, 4, 5, 6, & 7.
         r3.setSide(Direction.EAST, r4);
@@ -110,19 +109,16 @@ public class Adventure
         r7.setSide(Direction.UP, r4);
 
         // Room 8:
-        Room r8 = new Room("A lizard scampers past you, or is it a snake?\n" +
-                   "a narrow passage runs to the east and an evin narrower one\n" +
-                   "runs to the west (r8).");
+        Room r8 = new Room("A lizard scampers past you, or is it a snake?\n"
+                + "a narrow passage runs to the east and an evin narrower one\n" + "runs to the west (r8).");
 
         // Room 9:
         Room r9 = new Room("Room r9.");
 
         // Room 10:
-        Room r10 = new Room("It looks like someone has been here.\n" +
-                    "There is a pile of candy wrappers on the floor,\n" +
-                    "and maybe something else. \n" +
-                    "Wait, there is a trap door on the floor,\n" +
-                    "but it is locked (r10).");
+        Room r10 = new Room("It looks like someone has been here.\n"
+                + "There is a pile of candy wrappers on the floor,\n" + "and maybe something else. \n"
+                + "Wait, there is a trap door on the floor,\n" + "but it is locked (r10).");
 
         // Room 11:
         Room r11 = new Room("This room is very dark. You can just barely see (r11).");
