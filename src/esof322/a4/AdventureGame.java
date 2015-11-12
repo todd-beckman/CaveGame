@@ -32,9 +32,7 @@ package esof322.a4;
  * The main routine is AdventureGame.main
  **/
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 /*
  * Todd Beckman
@@ -43,37 +41,13 @@ import java.io.InputStreamReader;
  * Luke O'Neill
  * Luke Welna
  */
-/*
- * Todd Beckman: convertDirection uses char. This is because it is only ever called from char and is
- * guaranteed to have a length of one. It now returns the value directly instead of storing it first
- * and breaking cases. Bad direction input is now -1 which is much more intuitive than 9999. The
- * input character is forced to be lowercase to eliminate half of the test cases.
- * 
- * Todd Beckman: Move input check out into a separate caller. This involved making the keyboard
- * reader a private field and making a private method to interface with it. This handles both elegant
- * design and prepares the program to receive input from the gui instead of the keyboard. An integer
- * receiver was also made to support integer input rather than first character input.
- * 
- * Kalvyn Lu: Player is now a global variable. Added getPlayer() method
- * Dylan Hills: Added model.setView and model.setAction to alter what the GUI displays.
- * 
- * Todd Beckman: Pulled out the prints into separate methods so that everything is printed through the
- * same methods and thus guarantee the same messages are printed (and only once). Also fixed an
- * off-by-one error in grab/drop that was an issue in the provided code.
- */
 public class AdventureGame
 {
     int counter = 0;
-    private AdventureGameModelFacade model;
-
-    /** Keep track of which type of input to look for */
-    private boolean usingKeyboard;
-
-    /** Create the keyboard to control the game; we only need one */
-    private BufferedReader keyboard;
-
-    /** Create the input to control the game; we only need one */
-    private SynchronizedMessageHandler listener;
+    
+    private Factory factory;
+    
+    private View view;
 
     /** The current player **/
     private Player player = new Player();
@@ -82,116 +56,6 @@ public class AdventureGame
     public Player getPlayer()
     {
         return player;
-    }
-
-    /**
-     * Force the program to wait for user input. Gets the first character of
-     * input.
-     * 
-     * @return The user's input or ' ' on failure
-     */
-    private char receiveChar()
-    {
-        if (usingKeyboard)
-        {
-            try
-            {
-                return keyboard.readLine().toLowerCase().charAt(0);
-            }
-            // Empty String
-            catch (StringIndexOutOfBoundsException e1)
-            {
-                return ' ';
-            }
-            // Buffered Reader fails
-            catch (IOException e)
-            {
-                return ' ';
-            }
-        }
-        else
-        {
-            try
-            {
-                return listener.receive().toLowerCase().charAt(0);
-            }
-            // Empty String
-            catch (StringIndexOutOfBoundsException e)
-            {
-                return ' ';
-            }
-        }
-    }
-
-    /**
-     * Force the program to wait for user input. Gets an integer input.
-     * 
-     * @return The user's input or -1 on failure.
-     */
-    private int receiveInt()
-    {
-        String input;
-        if (usingKeyboard)
-        {
-            try
-            {
-                input = keyboard.readLine();
-            }
-            // Buffered Reader fails
-            catch (IOException e)
-            {
-                return -1;
-            }
-        }
-        else
-        {
-            input = listener.receive();
-        }
-        try
-        {
-            return Integer.parseInt(input);
-        }
-        // String not a number
-        catch (NumberFormatException e)
-        {
-            return -1;
-        }
-    }
-
-    /**
-     * Prints a message to the view slot
-     * 
-     * @param message
-     *            The message to print
-     */
-    private void printView(String message)
-    {
-        if (usingKeyboard)
-        {
-            System.out.println(message);
-        }
-        else
-        {
-            model.setView(message);
-        }
-    }
-
-    /**
-     * Prints a message to the action slot
-     * 
-     * @param message
-     *            The message to print
-     */
-    private void printAction(String message)
-    {
-        if (usingKeyboard)
-        {
-            System.out.println(message);
-        }
-        else
-        {
-            model.setAction(message);
-        }
     }
 
     /**
@@ -227,33 +91,13 @@ public class AdventureGame
      */
     private Item choosePickupItem(Player player)
     {
-        if (usingKeyboard)
+        Item[] contents = player.getLocation().getRoomContents();
+        String[] items = new String[contents.length];
+        for (int i = 0; i < items.length; i++)
         {
-            Item[] contents = (player.getLocation()).getRoomContents();
-            int choice = -1;
-
-            do
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.append("The room has:\n");
-                for (int i = 0; i < contents.length; i++)
-                {
-                    sb.append(i + ": ");
-                    sb.append(contents[i].getDesc());
-                    sb.append("\n");
-                }
-                sb.append("Enter the number of the item to grab: ");
-                printView(sb.toString());
-                choice = receiveInt();
-                if (choice < 0 || choice > contents.length)
-                {
-                    printView("That item is not in the room.");
-                }
-            }
-            while (choice < 0 || choice > contents.length);
-            return contents[choice];
+            items[i] = contents[i].getName() + contents[i].getDesc();
         }
-        return model.getItemChoice(player);
+        return contents[view.chooseBetween(items)];
     }
 
     /**
@@ -261,57 +105,50 @@ public class AdventureGame
      */
     private Item chooseDropItem(Player p)
     {
-        int choice = -1;
-        Item[] contents = p.getItems();
-        do
+        Item[] inventory = player.getItems();
+        String[] items = new String[inventory.length];
+        for (int i = 0; i < items.length; i++)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.append("You are carrying:\n");
-            for (int i = 0; i < contents.length; i++)
-            {
-                sb.append(i + ": ");
-                sb.append(contents[i].getDesc());
-            }
-            sb.append("\nEnter the number of the item to drop: ");
-            printView(sb.toString());
-            choice = receiveInt();
-            if (choice < 0 || choice > p.numItemsCarried())
-            {
-                printView("Invalid choice.");
-            }
+            items[i] = inventory[i].getName() + inventory[i].getDesc();
         }
-        while (choice < 0 || choice > p.numItemsCarried());
-
-        return (p.getItems())[choice];
+        return inventory[view.chooseBetween(items)];
     }
 
     public void startQuest()
     {
-        player = new Player();
-        Room startRm = Adventure.createAdventure(Adventure.LEVEL_0);
-        player.setRoom(startRm);
+        
+        //  TODO: dialogue to choose which level to load
+        factory = new Level0Factory();
+        
+        //  TODO: dialogue to choose whether to load from file
+        //  requires checking to see if save file exists
+        
+        player = factory.createAdventure();
+        
         char key = 'p'; // p is completely arbitrary
 
         /* The main query user, get command, interpret, execute cycle. */
         while (key != Command.QUIT)
         {
             // model.setAction("hello" + counter++);
-            printView(player.look() + "\n\nYou are carrying: " + player.showInventory() + '\n');
+            view.showStatusMessage(player.look() + "\n\nYou are carrying: " + player.showInventory() + '\n');
 
             /* get next move */
             int direction = -1;
 
-            // We only care about this in keyboard mode
-            if (usingKeyboard)
+            // Display the controls
+            if (view instanceof ConsoleView)
             {
-                System.out.println(
-                        "Which way (n,s,e,w,u,d),\n" + " or grab (g) or toss (t) an item,\n" + " or quit (q)?" + '\n');
+                view.showActionMessage("Which way (n,s,e,w,u,d),\n" + " or grab (g) or toss (t) an item,\n" + " or quit (q)?" + '\n');
             }
-            key = receiveChar();
+            
+            key = view.receiveChar();
+            
+            
             direction = convertDirection(key);
             if (direction != -1)
             {
-                printAction(player.go(direction));
+                view.showActionMessage(player.go(direction));
             }
             // Grab item
             else
@@ -320,19 +157,19 @@ public class AdventureGame
                 {
                     if (player.areHandsFull())
                     {
-                        printAction("Your hands are full. Try getting rid of something.");
+                        view.showActionMessage("Your hands are full. Try getting rid of something.");
                     }
                     else
                         if ((player.getLocation()).roomEmpty())
                         {
-                            printAction("The room is empty.");
+                            view.showActionMessage("The room is empty.");
                         }
                         else
                         {
                             Item grabItem = choosePickupItem(player);
                             player.pickUp(grabItem);
                             (player.getLocation()).removeItem(grabItem);
-                            printAction("Grabbed the item " + grabItem.getDesc());
+                            view.showActionMessage("Grabbed the item " + grabItem.getDesc());
                         }
                 }
                 // Toss Item
@@ -342,49 +179,34 @@ public class AdventureGame
                     {
                         if (player.areHandsEmpty())
                         {
-                            printAction("You have nothing to drop.");
+                            view.showActionMessage("You have nothing to drop.");
                         }
                         else
                         {
                             Item dropItem = chooseDropItem(player);
-                            printAction("Dropped " + player.drop(dropItem));
+                            view.showActionMessage("Dropped " + player.drop(dropItem));
                         }
                     }
                 }
             }
         }
-        printAction("Bye! Have a very good time!");
-
-    }
-
-    /**
-     * Set up a game in which a messaging system will be used
-     * 
-     * @param messenger
-     *            The listener to act as the interface
-     */
-    public AdventureGame(AdventureGameModelFacade model, SynchronizedMessageHandler messenger)
-    {
-        this.model = model;
-        this.listener = messenger;
-        usingKeyboard = false;
+        view.showActionMessage("Bye! Have a very good time!");
     }
 
     /**
      * Setup a game in which the keyboard will be used
      */
-    public AdventureGame()
+    public AdventureGame(View view)
     {
-        keyboard = new BufferedReader(new InputStreamReader(System.in));
-        usingKeyboard = true;
+        this.view = view;
+        view.showStatusMessage("Welcome to the Adventure Game,\n"
+                + "which is inspired by an old game called the Colossal Cave Adventure.\n"
+                + "Java implementation Copyright (c) 1999 - 2012 by James M. Bieman\n");
     }
 
     public static void main(String args[]) throws IOException
     {
-        System.out.println("Welcome to the Adventure Game,\n"
-                + "which is inspired by an old game called the Colossal Cave Adventure.\n"
-                + "Java implementation Copyright (c) 1999 - 2012 by James M. Bieman\n");
-        AdventureGame theGame = new AdventureGame();
+        AdventureGame theGame = new AdventureGame(new ConsoleView());
         theGame.startQuest();
     }
 

@@ -66,14 +66,16 @@ public class AdventureGameView extends GBFrame
     JButton itemSelectButton;
     Item item;
 
-    AdventureGameModelFacade model;
-
+    AdventureGameModelFacade facade;
+    
     // Constructor-----------------------------------------------
 
-    public AdventureGameView()
+    public AdventureGameView(AdventureGameModelFacade facade)
     {
+        this.facade = facade;
+        
+        
         setTitle("Adventure Game");
-        model = new AdventureGameModelFacade();
 
         viewArea.setEditable(false);
         carryingArea.setEditable(false);
@@ -95,38 +97,38 @@ public class AdventureGameView extends GBFrame
                 {
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_W:
-                    model.goNorth();
+                    facade.goNorth();
                     break;
 
                 case KeyEvent.VK_DOWN:
                 case KeyEvent.VK_S:
-                    model.goSouth();
+                    facade.goSouth();
                     break;
 
                 case KeyEvent.VK_RIGHT:
                 case KeyEvent.VK_D:
-                    model.goEast();
+                    facade.goEast();
                     break;
 
                 case KeyEvent.VK_LEFT:
                 case KeyEvent.VK_A:
-                    model.goWest();
+                    facade.goWest();
                     break;
 
                 case KeyEvent.VK_R:
-                    model.goUp();
+                    facade.goUp();
                     break;
 
                 case KeyEvent.VK_F:
-                    model.goDown();
+                    facade.goDown();
                     break;
 
                 case KeyEvent.VK_G:
-                    model.grab();
+                    facade.grab();
                     break;
 
                 case KeyEvent.VK_T:
-                    model.drop();
+                    facade.drop();
                     break;
                 }
             }
@@ -194,22 +196,20 @@ public class AdventureGameView extends GBFrame
 
     public void displayCurrentInfo()
     {
-        viewArea.setText(model.getView());
-        carryingArea.setText(model.getItems());
-        actionArea.setText(model.getAction());
-    }
-
-    public void startQuest()
-    {
-        model.setGUI(this);
-        model.startQuest();
+        viewArea.setText(facade.getStatus());
+        carryingArea.setText(facade.getItems());
+        actionArea.setText(facade.getAction());
     }
 
     public static void main(String[] args)
     {
-        AdventureGameView view = new AdventureGameView();
+        AdventureGameModelFacade facade = new AdventureGameModelFacade();
+        AdventureGame game = new AdventureGame(facade);
+        
+        AdventureGameView view = facade.getView();
         view.setSize(800, 600); /* was 400, 250 */
         view.setVisible(true);
-        view.startQuest();
+        
+        game.startQuest();
     }
 }

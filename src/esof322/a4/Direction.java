@@ -9,6 +9,25 @@ package esof322.a4;
  */
 public class Direction
 {
+    public static int reverse(int direction)
+    {
+        switch (direction)
+        {
+        case NORTH:
+            return SOUTH;
+        case EAST:
+            return WEST;
+        case SOUTH:
+            return NORTH;
+        case WEST:
+            return EAST;
+        case UP:
+            return DOWN;
+        case DOWN:
+            return UP;
+        }
+        return -1;
+    }
 
     /**
      * The enumeration of direction facing north

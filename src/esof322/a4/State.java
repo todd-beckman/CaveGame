@@ -105,7 +105,7 @@ public class State
                 break;
                 
             case "putplayer":
-                player.setLoc(((Room)rooms.get(Integer.parseInt(lineData[1]))));
+                player.setLocation(((Room)rooms.get(Integer.parseInt(lineData[1]))));
                 break;
                 
             case "giveplayer":

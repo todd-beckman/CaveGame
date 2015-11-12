@@ -1,7 +1,6 @@
 package esof322.a4;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 
 /**
  * Adventure Game Program Code Copyright (c) 1999 James M. Bieman
@@ -11,76 +10,98 @@ import java.util.ArrayList;
  * The main routine is AdventureGame.main
  **/
 
-/*
- * Todd Beckman Dylan Hills Kalvyn Lu Luke O'Neill Luke Welna
- */
-/*
- * Dylan Hills: drop() and go() now return strings of the item and the room
- * respectively.
- */
 public class Player
 {
-    private Room myLoc;
+    private Room location;
+    
+    //  Used to store a dynamic inventory without gaps with constant insert, search, and delete
     private ArrayDeque<Item> inventory = new ArrayDeque<Item>(MAXIMUM_ITEM_COUNT);
 
     /**
      * The maximum number of items a player is allowed to hold
      */
     public static int MAXIMUM_ITEM_COUNT = 2;
-
-    public void setRoom(Room r)
+    
+    /**
+     * Force the player to move to a new location. Should not be called outside of
+     * level creation as it violates the state machine
+     * @param room The current room
+     */
+    public void setLocation(Room room)
     {
-        myLoc = r;
+        location = room;
     }
 
+    /**
+     * Gets the description of the room the player is currently in
+     * @return The current room's description
+     */
     public String look()
     {
-        return myLoc.getDesc();
+        return location.getDesc();
     }
 
+    /**
+     * Attempt to move in a certain direction
+     * @param direction The direction to move
+     * @return The description of the success or failure
+     */
     public String go(int direction)
     {
-        return myLoc.exit(direction, this);
+        return location.exit(direction, this);
     }
-
-    public void pickUp(Item item)
-    {
-        if (myLoc.hasItem(item) && inventory.size() < MAXIMUM_ITEM_COUNT)
-        {
-            inventory.add(item);
-            myLoc.removeItem(item);
-        }
-    }
-
+    
+    /**
+     * Gets the list of items the player currently has
+     * @return The array containing the items
+     */
     public Item[] getItems()
     {
         return inventory.toArray(new Item[0]);
     }
-
+    
+    /**
+     * Determines whether a player is holding a certain item
+     * @param item The item to search for
+     * @return Whether the player has it
+     */
     public boolean hasItem(Item item)
     {
         return inventory.contains(item);
     }
 
+    /**
+     * Pick up an item from the room
+     * @param item The item to be picked up
+     */
+    public void pickUp(Item item)
+    {
+        if (location.hasItem(item) && inventory.size() < MAXIMUM_ITEM_COUNT)
+        {
+            inventory.add(item);
+            location.removeItem(item);
+        }
+    }
+
+    /**
+     * Drops an item into the room
+     * @param item The item to be dropped
+     * @return The status of the success or failure of dropping the item
+     */
     public String drop(Item item)
     {
         if (inventory.contains(item))
         {
-            myLoc.addItem(item);
+            location.addItem(item);
             inventory.remove(item);
             return item.getDesc();
         }
         return "";
     }
 
-    public void setLoc(Room r)
-    {
-        myLoc = r;
-    }
-
     public Room getLocation()
     {
-        return myLoc;
+        return location;
     }
 
     public String showInventory()

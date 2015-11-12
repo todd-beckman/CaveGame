@@ -12,22 +12,18 @@ package esof322.a4;
  * Kalvyn Lu: Added game(), drop(), and takeInput() Methods. The game also shows the inventory.
  * Dylan Hills: Added roomView, action, getView(), setView(), getAction(),setAction(). Added AdventureGameView and setGUI().
  */
-public class AdventureGameModelFacade
+public class AdventureGameModelFacade implements View
 {
 
     // some private fields to reference current location,
     // its description, what I'm carrying, etc.
     //
     // These methods and fields are left as exercises.
-    /**
-     * The game from which data will be requested
-     **/
-    private AdventureGame game;
 
     /**
      * The view with which the player will see the game
      */
-    private AdventureGameView view;
+    private AdventureGameView gui;
 
     /**
      * The current room's description
@@ -38,30 +34,39 @@ public class AdventureGameModelFacade
      * The most recent action taken
      */
     private String action = "";
+    
+    private String items = "";
 
+    /**
+     * Prevent button control for events such as input
+     */
     private boolean lockCommands = false;
 
     /**
      * The input mechanism to interface with the game
      **/
-    private SynchronizedMessageHandler messager;
+    private Object messager;
 
-    AdventureGameModelFacade()
+    public AdventureGameModelFacade()
     {
-        this.messager = new SynchronizedMessageHandler();
-        this.game = new AdventureGame(this, messager);
+        this.gui = new AdventureGameView(this);
+    }
+    
+    public AdventureGameView getView()
+    {
+        return gui;
     }
 
-    public void startQuest()
-    {
-        game.startQuest();
-    }
-
+    private char command = ' ';
     private void sendCommand(char c)
     {
         if (!lockCommands)
         {
-            messager.send(c);
+            synchronized (messager)
+            {
+                command = c;
+                messager.notifyAll();
+            }
         }
     }
 
@@ -105,46 +110,71 @@ public class AdventureGameModelFacade
         sendCommand(Command.DROP);
     }
 
-    public void takeInput(String input)
+    public void setItems(String items)
     {
-        messager.send(input);
+        this.items = items;
     }
-
-    public void setGUI(AdventureGameView gui)
-    {
-        this.view = gui;
-    }
-
-    public void setView(String views)
-    {
-        this.roomView = views;
-        view.displayCurrentInfo();
-    }
-
-    public String getView()
-    {
-        return roomView;
-    }
-
+    
     public String getItems()
     {
-        return game.getPlayer().showInventory();
+        return items;
     }
-
+    
     public String getAction()
     {
         return action;
     }
-
-    public void setAction(String a)
+    
+    @Override
+    public void showActionMessage(String message)
     {
-        action = a;
-        view.displayCurrentInfo();
+        action = message;
+        gui.displayCurrentInfo();
+    }
+
+    @Override
+    public void showStatusMessage(String message)
+    {
+        this.roomView = message;
+        gui.displayCurrentInfo();
+    }
+    
+    public String getStatus()
+    {
+        return roomView;
     }
 
     public Item getItemChoice(Player player)
     {
-        return view.getItemChoice(player.getItems());
+        return gui.getItemChoice(player.getItems());
+    }
+
+    @Override
+    public char receiveChar()
+    {
+        synchronized (messager)
+        {
+            try
+            {
+                while (command == ' ')
+                {
+                    messager.wait();
+                }
+            }
+            catch (InterruptedException e){}
+        }
+        char received = command;
+        command = ' ';
+        return received;
+    }
+
+
+
+    @Override
+    public int chooseBetween(String[] options)
+    {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }

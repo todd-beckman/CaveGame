@@ -110,9 +110,9 @@ public class Room implements CaveSite
         return contents.toArray(new Item[0]);
     }
 
-    public String enter(Player p)
+    public String enter(Player player)
     {
-        p.setLoc(this);
+        player.setLocation(this);
         return "Entered a new room";
     }
 
