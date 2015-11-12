@@ -47,7 +47,7 @@ public class AdventureGame
     
     private Factory factory;
     
-    private View view;
+    private Controller controller;
 
     /** The current player **/
     private Player player = new Player();
@@ -64,6 +64,13 @@ public class AdventureGame
      * integers 0-9 as directions throughout the program. This is a bit of a
      * cludge, but is simpler for now than creating a Direction class. I use
      * this cludge because Java in 1999 did not have an enumerated data type.
+     */
+    
+    /**
+     * Converts between Command and Direction, and returns
+     * -1 for input not matching a direction.
+     * @param input The character, preferably enumerated from the Command class
+     * @return The direction matching the Direction class enumeration
      */
     private int convertDirection(char input)
     {
@@ -86,34 +93,38 @@ public class AdventureGame
     }
 
     /**
-     * choosePickupItem determines the specific item that a player wants to pick
-     * up.
+     * Determines which item the player will be picking up
+     * @return The item from the room
      */
-    private Item choosePickupItem(Player player)
+    private Item choosePickupItem()
     {
         Item[] contents = player.getLocation().getRoomContents();
         String[] items = new String[contents.length];
         for (int i = 0; i < items.length; i++)
         {
-            items[i] = contents[i].getName() + contents[i].getDesc();
+            items[i] = contents[i].getName() + ": " + contents[i].getDesc();
         }
-        return contents[view.chooseBetween(items)];
+        return contents[controller.chooseBetween(items)];
     }
 
     /**
-     * chooseDropItem determines the specific item that a player wants to drop
+     * Determines which item the player will be dropping
+     * @return The item from inventory
      */
-    private Item chooseDropItem(Player p)
+    private Item chooseDropItem()
     {
         Item[] inventory = player.getItems();
         String[] items = new String[inventory.length];
         for (int i = 0; i < items.length; i++)
         {
-            items[i] = inventory[i].getName() + inventory[i].getDesc();
+            items[i] = inventory[i].getName() + ": " + inventory[i].getDesc();
         }
-        return inventory[view.chooseBetween(items)];
+        return inventory[controller.chooseBetween(items)];
     }
 
+    /**
+     * Initializes the quest and thus begins the game
+     */
     public void startQuest()
     {
         
@@ -126,51 +137,59 @@ public class AdventureGame
         player = factory.createAdventure();
         
         char key = 'p'; // p is completely arbitrary
+        
+        boolean gameon = true;
 
         /* The main query user, get command, interpret, execute cycle. */
-        while (key != Command.QUIT)
+        while (gameon)
         {
             // model.setAction("hello" + counter++);
-            view.showStatusMessage(player.look() + "\n\nYou are carrying: " + player.showInventory() + '\n');
+            controller.showStatusMessage(player.look() + "\n\nYou are carrying: " + player.showInventory() + '\n');
 
             /* get next move */
             int direction = -1;
 
             // Display the controls
-            if (view instanceof ConsoleView)
+            if (controller instanceof ConsoleController)
             {
-                view.showActionMessage("Which way (n,s,e,w,u,d),\n" + " or grab (g) or toss (t) an item,\n" + " or quit (q)?" + '\n');
+                controller.showActionMessage("Which way (n,s,e,w,u,d),\n" + " or grab (g) or toss (t) an item,\n" + " or quit (q)?" + '\n');
             }
             
-            key = view.receiveChar();
+            key = controller.receiveChar();
             
             
             direction = convertDirection(key);
             if (direction != -1)
             {
-                view.showActionMessage(player.go(direction));
+                controller.showActionMessage(player.go(direction));
             }
             // Grab item
             else
             {
+                if (key == Command.QUIT)
+                {
+                    gameon = false;
+                }
                 if (key == Command.GRAB)
                 {
                     if (player.areHandsFull())
                     {
-                        view.showActionMessage("Your hands are full. Try getting rid of something.");
+                        controller.showActionMessage("Your hands are full. Try getting rid of something.");
                     }
                     else
+                    {
                         if ((player.getLocation()).roomEmpty())
                         {
-                            view.showActionMessage("The room is empty.");
+                            controller.showActionMessage("The room is empty.");
                         }
                         else
                         {
-                            Item grabItem = choosePickupItem(player);
+                            Item grabItem = choosePickupItem();
                             player.pickUp(grabItem);
                             (player.getLocation()).removeItem(grabItem);
-                            view.showActionMessage("Grabbed the item " + grabItem.getDesc());
+                            controller.showActionMessage("Grabbed the item " + grabItem.getDesc());
                         }
+                    }
                 }
                 // Toss Item
                 else
@@ -179,26 +198,28 @@ public class AdventureGame
                     {
                         if (player.areHandsEmpty())
                         {
-                            view.showActionMessage("You have nothing to drop.");
+                            controller.showActionMessage("You have nothing to drop.");
                         }
                         else
                         {
-                            Item dropItem = chooseDropItem(player);
-                            view.showActionMessage("Dropped " + player.drop(dropItem));
+                            Item dropItem = chooseDropItem();
+                            controller.showActionMessage("Dropped " + player.drop(dropItem));
                         }
                     }
                 }
             }
         }
-        view.showActionMessage("Bye! Have a very good time!");
+        controller.showActionMessage("Bye! Have a very good time!");
     }
 
     /**
-     * Setup a game in which the keyboard will be used
+     * Prepares the game for playing. startQuest() is still needed in order to begin the
+     * quest.
+     * @param view The user interface to be used
      */
-    public AdventureGame(View view)
+    public AdventureGame(Controller view)
     {
-        this.view = view;
+        this.controller = view;
         view.showStatusMessage("Welcome to the Adventure Game,\n"
                 + "which is inspired by an old game called the Colossal Cave Adventure.\n"
                 + "Java implementation Copyright (c) 1999 - 2012 by James M. Bieman\n");
@@ -206,7 +227,7 @@ public class AdventureGame
 
     public static void main(String args[]) throws IOException
     {
-        AdventureGame theGame = new AdventureGame(new ConsoleView());
+        AdventureGame theGame = new AdventureGame(new ConsoleController());
         theGame.startQuest();
     }
 

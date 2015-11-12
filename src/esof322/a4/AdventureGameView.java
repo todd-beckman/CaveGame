@@ -13,18 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
-/*
- * Todd Beckman
- * Dylan Hills
- * Kalvyn Lu
- * Luke O'Neill
- * Luke Welna
- */
-/*
- * Todd Beckman: Added startQuest method to invoke the model's startQuest
- * Kalvyn Lu: Added a TextArea for String input. Hooked up grab and drop buttons to the model.
- * Dylan Hills: Added an action TextArea to display what the player just did.
- */
 public class AdventureGameView extends GBFrame
 {
     private static final long serialVersionUID = 1L;
@@ -145,18 +133,18 @@ public class AdventureGameView extends GBFrame
         // }
     }
 
-    public Item getItemChoice(Item[] inventory)
+    /**
+     * Allows the player to pick between a list of things
+     * @param inventory
+     * @return
+     */
+    public int getChoice(String[] options)
     {
         popup.setSize(300, 200);
 
-        String[] names = new String[inventory.length];
-        for (int i = 0; i < inventory.length; i++)
-        {
-            names[i] = inventory[i].getName() + ": " + inventory[i].getDesc();
-        }
-        itemBox = new JComboBox<String>(names);
+        itemBox = new JComboBox<String>(options);
 
-        popup = new JFrame("Choose an item");
+        popup = new JFrame("Choose one");
 
         popup.add(itemBox);
         item = null;
@@ -167,8 +155,7 @@ public class AdventureGameView extends GBFrame
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-                int index = itemBox.getSelectedIndex();
-                item = inventory[index];
+                popup.notifyAll();
             }
         });
 
@@ -191,9 +178,12 @@ public class AdventureGameView extends GBFrame
 
         popup.setVisible(false);
         popup = null;
-        return item;
+        return itemBox.getSelectedIndex();
     }
 
+    /**
+     * Updates the user interface
+     */
     public void displayCurrentInfo()
     {
         viewArea.setText(facade.getStatus());

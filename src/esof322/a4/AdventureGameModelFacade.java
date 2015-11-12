@@ -12,7 +12,7 @@ package esof322.a4;
  * Kalvyn Lu: Added game(), drop(), and takeInput() Methods. The game also shows the inventory.
  * Dylan Hills: Added roomView, action, getView(), setView(), getAction(),setAction(). Added AdventureGameView and setGUI().
  */
-public class AdventureGameModelFacade implements View
+public class AdventureGameModelFacade implements Controller
 {
 
     // some private fields to reference current location,
@@ -144,11 +144,6 @@ public class AdventureGameModelFacade implements View
         return roomView;
     }
 
-    public Item getItemChoice(Player player)
-    {
-        return gui.getItemChoice(player.getItems());
-    }
-
     @Override
     public char receiveChar()
     {
@@ -173,8 +168,7 @@ public class AdventureGameModelFacade implements View
     @Override
     public int chooseBetween(String[] options)
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return gui.getChoice(options);
     }
 
 }

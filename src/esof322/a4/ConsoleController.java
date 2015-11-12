@@ -4,10 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ConsoleView implements View
+/**
+ * A game view which uses the console I/O in order to play the Cave Game
+ * @author Todd Beckman
+ *
+ */
+public class ConsoleController implements Controller
 {
     private BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 
+    /**
+     * Gets the first character of the next line of input
+     */
     @Override
     public char receiveChar()
     {

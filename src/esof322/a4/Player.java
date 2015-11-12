@@ -99,11 +99,19 @@ public class Player
         return "";
     }
 
+    /**
+     * Gets the player's current location
+     * @return The location
+     */
     public Room getLocation()
     {
         return location;
     }
 
+    /**
+     * Formats the player's inventory into a string with each item on a new line
+     * @return The player's inventory
+     */
     public String showInventory()
     {
         StringBuilder sb = new StringBuilder();
@@ -117,19 +125,30 @@ public class Player
         return sb.toString();
     }
 
+    /**
+     * Determines if the player's hands are full
+     * @return Whether the player can pick up an item
+     */
     public boolean areHandsFull()
     {
         return inventory.size() == MAXIMUM_ITEM_COUNT;
     }
-
+    
+    /**
+     * Determines if the player's hands are empty
+     * @return Whether the player has an item to be dropped
+     */
     public boolean areHandsEmpty()
     {
         return inventory.size() == 0;
     }
-
+    
+    /**
+     * Checks the number of items the player has
+     * @return The number
+     */
     public int numItemsCarried()
     {
         return inventory.size();
     }
-
 }
