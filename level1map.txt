@@ -31,7 +31,8 @@ Key:
 
 Walkthrough:
 Use this input to get the key: d-w-n-i-e-s-e-n-i-w-n-d-g-0
-Then, use this input to escape:	u-s-e-i-s-w-n-w-i-s-e-u
+Then, use this input to reach the treasure: u-s-e-i-s-w-n-w-i-s-e-u-n-g-0
+Bring the treasure to the entrance with: s
 
            +---------+
            |         |
