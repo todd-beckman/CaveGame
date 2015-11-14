@@ -2,6 +2,8 @@ package esof322.a4;
 
 import java.util.ArrayDeque;
 
+import esof322.a4.util.Direction;
+
 /**
  * Adventure Game Program Code Copyright (c) 1999 James M. Bieman
  *
@@ -130,13 +132,12 @@ public class Room implements CaveSite
             sb.append(str);
             sb.append("\n");
         }
-        sb.append("\n\nRoom Contents: ");
+        sb.append("\nRoom Contents: ");
         for (Item i : contents)
         {
             sb.append(i.getDesc());
             sb.append(" ");
         }
-        sb.append("\n");
         return sb.toString();
     }
 

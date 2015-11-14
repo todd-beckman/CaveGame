@@ -34,13 +34,10 @@ package esof322.a4;
 
 import java.io.IOException;
 
-/*
- * Todd Beckman
- * Dylan Hills
- * Kalvyn Lu
- * Luke O'Neill
- * Luke Welna
- */
+import esof322.a4.level0.Level0Factory;
+import esof322.a4.util.Command;
+import esof322.a4.util.Direction;
+
 public class AdventureGame
 {
     int counter = 0;
@@ -144,7 +141,8 @@ public class AdventureGame
         while (gameon)
         {
             // model.setAction("hello" + counter++);
-            controller.showStatusMessage(player.look() + "\n\nYou are carrying: " + player.showInventory() + '\n');
+            controller.showStatusMessage(player.look() +
+                    "\n\nYou are carrying: " + player.showInventory());
 
             /* get next move */
             int direction = -1;
@@ -152,7 +150,7 @@ public class AdventureGame
             // Display the controls
             if (controller instanceof ConsoleController)
             {
-                controller.showActionMessage("Which way (n,s,e,w,u,d),\n" + " or grab (g) or toss (t) an item,\n" + " or quit (q)?" + '\n');
+                controller.showActionMessage("Which way (n,s,e,w,u,d),\n" + " or grab (g) or toss (t) an item,\n" + " or quit (q)?");
             }
             
             key = controller.receiveChar();

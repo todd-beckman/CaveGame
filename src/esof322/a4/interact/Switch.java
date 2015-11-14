@@ -1,8 +1,8 @@
-package esof322.a4;
+package esof322.a4.interact;
 
 import java.util.ArrayList;
 
-public class Switch implements Subject
+public class Switch implements Subject, Interactable
 {
     private ArrayList<Observer> observers;
     
@@ -42,4 +42,10 @@ public class Switch implements Subject
         }
     }
 
+    public String interact()
+    {
+        active = !active;
+        notifyObservers();
+        return "Switch " + id + " was turned " + (active? "on" : "off") + ".";
+    }
 }

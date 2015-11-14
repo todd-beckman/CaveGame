@@ -1,4 +1,4 @@
-package esof322.a4;
+package esof322.a4.util;
 
 public class Command
 {
@@ -47,4 +47,9 @@ public class Command
      * The character mapping to the quit instruction
      */
     public static final char QUIT = 'q';
+    
+    /**
+     * The character mappting to the save instruction
+     */
+    public static final char SAVE = 's';
 }

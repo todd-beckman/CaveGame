@@ -8,8 +8,10 @@ public interface Factory
     public Player loadAdventure(String filename);
     
     public Room createRoom(String description);
+    public Door createDoor(Room from, Room into, Key key);
+
     public Key createKey();
-    public Door createDoor(Room from, int direction, Room into, Key key);
+    public Treasure createTreasure(String description);
     
     
 }

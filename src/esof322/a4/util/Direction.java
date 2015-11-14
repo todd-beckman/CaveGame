@@ -1,4 +1,4 @@
-package esof322.a4;
+package esof322.a4.util;
 
 /**
  * A class wrapping the enumerations of directions. Because Java enums are for

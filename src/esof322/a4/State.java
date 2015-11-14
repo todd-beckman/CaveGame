@@ -38,8 +38,13 @@ public class State
         this.rooms = rooms;
     }
     
-    public static State generateAdventureFromSave (String save)
-    {
+    /**
+     * Constructs a State from save data given a factory
+     * @param factory The factory to be used in constructing this state
+     * @param save The String representing the save data, NOT THE FILENAME
+     */
+    public State (Factory factory, String save)
+    {        
         String actionMessage = "";
         
         ArrayList<CaveSite> rooms = new ArrayList<CaveSite>();
@@ -58,27 +63,22 @@ public class State
                 break;
             
             case "addroom":
-                CaveSite room;
-                if (lineData[1].equals("Wall"))
-                {
-                    room = new Wall();
-                }
-                else if (lineData[1].equals("Door"))
+                CaveSite room = null;
+                if (lineData[1].equals("Door"))
                 {
                     int to = Integer.parseInt(lineData[2]);
                     int from = Integer.parseInt(lineData[3]);
                     Key key = keys.get(Integer.parseInt(lineData[4]));
-                    room = new Door(rooms.get(to), rooms.get(from), key);
+                    room = factory.createDoor((Room)rooms.get(to), (Room)rooms.get(from), key);
                 }
                 else if (lineData[1].equals("Room"))
                 {
-                    room = new Room(lineData[2]);
+                    room = factory.createRoom(lineData[2]);
                 }
-                else
+                if (room != null)
                 {
-                    room = new Wall();
+                    rooms.add(room);
                 }
-                rooms.add(room);
                 break;
                             
             case "setside":
@@ -91,14 +91,14 @@ public class State
             case "putitem":
                 if (lineData[1].equals("Key"))
                 {
-                    Key key = new Key("A key labeled " + keys.size(), keys.size()); 
+                    Key key = factory.createKey();
                     keys.add(key);
                     items.add(key);
                     ((Room)rooms.get(Integer.parseInt(lineData[2]))).addItem(key);
                 }
                 else if (lineData[1].equals("Treasure"))
                 {
-                    Treasure treasure = new Treasure(lineData[3]);
+                    Treasure treasure = factory.createTreasure(lineData[3]);
                     items.add(treasure);
                     ((Room)rooms.get(Integer.parseInt(lineData[2]))).addItem(treasure);
                 }
@@ -117,7 +117,7 @@ public class State
                 }
                 else if (lineData[1].equals("Treasure"))
                 {
-                    Treasure treasure = new Treasure(lineData[2]);
+                    Treasure treasure = factory.createTreasure(lineData[2]);
                     items.add(treasure);
                     player.getLocation().addItem(treasure);
                     player.pickUp(treasure);
@@ -128,12 +128,16 @@ public class State
                 throw new RuntimeException("Invalid save structure instruction:" + lineData[0]);
             }
         }
-
-        return new State(player, actionMessage, items.toArray(new Item[0]), rooms.toArray(new CaveSite[0]));
+        
+        this.actionMessage = actionMessage;
+        this.items = items.toArray(new Item[0]);
+        this.rooms = rooms.toArray(new CaveSite[0]);
     }
     
     /**
      * Creates a string that contains the state of the game. Save this to file to preserve the state of the game.
+     * 
+     * Not currently functional
      */
     public String toString ()
     {

@@ -1,6 +1,8 @@
-package esof322.a4;
+package esof322.a4.gui;
 
 import BreezySwing.GBFrame;
+import esof322.a4.AdventureGame;
+import esof322.a4.Item;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

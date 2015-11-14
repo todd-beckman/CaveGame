@@ -1,4 +1,8 @@
-package esof322.a4;
+package esof322.a4.interact;
+
+import esof322.a4.CaveSite;
+import esof322.a4.Player;
+import esof322.a4.Room;
 
 public class Gate implements CaveSite, Observer
 {    

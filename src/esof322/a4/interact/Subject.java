@@ -1,4 +1,4 @@
-package esof322.a4;
+package esof322.a4.interact;
 
 public interface Subject
 {

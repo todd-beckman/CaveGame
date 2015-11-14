@@ -1,9 +1,17 @@
-package esof322.a4;
+package esof322.a4.level0;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import esof322.a4.Door;
+import esof322.a4.Factory;
+import esof322.a4.Key;
+import esof322.a4.Player;
+import esof322.a4.Room;
+import esof322.a4.State;
+import esof322.a4.Treasure;
 
 public class Level0Factory implements Factory
 {
@@ -44,7 +52,7 @@ public class Level0Factory implements Factory
             return null;
         }
         
-        State state = State.generateAdventureFromSave(save);
+        State state = new State(this, save);
         return state.player;
     }
     
@@ -52,21 +60,22 @@ public class Level0Factory implements Factory
     {
         return new Room(description);
     }
-   
+    
+    public Door createDoor(Room from, Room into, Key key)
+    {
+        Door door = new Door(from, into, key);
+                
+        return door;
+    }
+    
+
     public Key createKey()
     {
         return new Key("A shiny gold key labeled " + keyID, keyID++);
     }
     
-    public Door createDoor(Room from, int direction, Room into, Key key)
+    public Treasure createTreasure(String description)
     {
-        Door door = new Door(from, into, key);
-        
-        from.setSide(direction, door);
-        into.setSide(Direction.reverse(direction), into);
-        
-        return door;
+        return new Treasure(description);
     }
-    
-    
 }
