@@ -15,28 +15,15 @@ package esof322.a4;
 
 public class Key extends Item
 {
-    private int id;
-    
-    public Key(String description, int id)
-    {
-        super(description);
-        this.id = id;
-    }
     
     public Key(String description)
     {
         super(description);
-        this.id = 0;
     }
-
+    
     @Override
     public String getName()
     {
         return "Key";
-    }
-    
-    public int getID()
-    {
-        return id;
     }
 }

@@ -1,5 +1,7 @@
 package esof322.a4;
 
+import java.io.File;
+
 /**
  * Adventure Game Program Code Copyright (c) 1999 James M. Bieman
  *
@@ -35,6 +37,7 @@ package esof322.a4;
 import java.io.IOException;
 
 import esof322.a4.level0.Level0Factory;
+import esof322.a4.level1.Level1Factory;
 import esof322.a4.util.Command;
 import esof322.a4.util.Direction;
 
@@ -53,40 +56,6 @@ public class AdventureGame
     public Player getPlayer()
     {
         return player;
-    }
-
-    /**
-     * Our system-wide internal representation of directions is integers. Here,
-     * we convert input string directions into integers. Internally, we use
-     * integers 0-9 as directions throughout the program. This is a bit of a
-     * cludge, but is simpler for now than creating a Direction class. I use
-     * this cludge because Java in 1999 did not have an enumerated data type.
-     */
-    
-    /**
-     * Converts between Command and Direction, and returns
-     * -1 for input not matching a direction.
-     * @param input The character, preferably enumerated from the Command class
-     * @return The direction matching the Direction class enumeration
-     */
-    private int convertDirection(char input)
-    {
-        switch (input)
-        {
-        case Command.NORTH:
-            return Direction.NORTH;
-        case Command.EAST:
-            return Direction.EAST;
-        case Command.SOUTH:
-            return Direction.SOUTH;
-        case Command.WEST:
-            return Direction.WEST;
-        case Command.DOWN:
-            return Direction.DOWN;
-        case Command.UP:
-            return Direction.UP;
-        }
-        return -1;
     }
 
     /**
@@ -124,28 +93,66 @@ public class AdventureGame
      */
     public void startQuest()
     {
-        
-        //  TODO: dialogue to choose which level to load
-        factory = new Level0Factory();
-        
+
         //  TODO: dialogue to choose whether to load from file
         //  requires checking to see if save file exists
+        //  TODO: dialogue to choose which level to load
         
-        player = factory.createAdventure();
+        int choice = -1;
+        controller.showActionMessage("Which adventure will you be playing today?");
+        String[] loadOptions = {"Start Level 0", "Start Level 1"};
+        choice = controller.chooseBetween(loadOptions);
         
-        char key = 'p'; // p is completely arbitrary
+        switch (choice)
+        {
+        case 0:
+            factory = new Level0Factory();
+            break;
+        case 1:
+            factory = new Level1Factory();
+            break;
+        default:
+            System.out.println("Oops! Something broke! That factory does not exist!");
+            System.exit(1);
+        }
         
+        if (new File(factory.getSaveLocation()).exists())
+        {
+            choice = -1;
+            controller.showActionMessage("Would you like to resume your adventure?");
+            String[] resumeOptions = {"Resume", "New Game"};
+            choice = controller.chooseBetween(resumeOptions);
+            switch (choice)
+            {
+            case 0:
+                player = factory.loadAdventure(factory.getSaveLocation());
+                break;
+            case 1:
+                player = factory.createAdventure();
+                break;
+            default:
+                System.out.println("Oops! Something broke! Must pick Resume or New Game!");
+                System.exit(1);
+            }
+        }
+        else
+        {
+            player = factory.createAdventure();
+        }
+        
+        if (player == null)
+        {
+            System.out.println("Oops!");
+        }
+                
         boolean gameon = true;
 
-        /* The main query user, get command, interpret, execute cycle. */
+        //  Game loop
         while (gameon)
         {
-            // model.setAction("hello" + counter++);
             controller.showStatusMessage(player.look() +
                     "\n\nYou are carrying: " + player.showInventory());
 
-            /* get next move */
-            int direction = -1;
 
             // Display the controls
             if (controller instanceof ConsoleController)
@@ -153,58 +160,66 @@ public class AdventureGame
                 controller.showActionMessage("Which way (n,s,e,w,u,d),\n" + " or grab (g) or toss (t) an item,\n" + " or quit (q)?");
             }
             
-            key = controller.receiveChar();
-            
-            
-            direction = convertDirection(key);
-            if (direction != -1)
+            switch (controller.receiveChar())
             {
-                controller.showActionMessage(player.go(direction));
-            }
-            // Grab item
-            else
-            {
-                if (key == Command.QUIT)
+            case Command.NORTH:
+                controller.showActionMessage(player.go(Direction.NORTH));
+                break;
+            case Command.EAST:
+                controller.showActionMessage(player.go(Direction.EAST));
+                break;
+            case Command.SOUTH:
+                controller.showActionMessage(player.go(Direction.SOUTH));
+                break;
+            case Command.WEST:
+                controller.showActionMessage(player.go(Direction.WEST));
+                break;
+            case Command.UP:
+                controller.showActionMessage(player.go(Direction.UP));
+                break;
+            case Command.DOWN:
+                controller.showActionMessage(player.go(Direction.DOWN));
+                break;
+            case Command.QUIT:
+                gameon = false;
+                break;
+            case Command.GRAB:
+                if (player.areHandsFull())
                 {
-                    gameon = false;
+                    controller.showActionMessage("Your hands are full. Try getting rid of something.");
                 }
-                if (key == Command.GRAB)
+                else
                 {
-                    if (player.areHandsFull())
+                    if ((player.getLocation()).roomEmpty())
                     {
-                        controller.showActionMessage("Your hands are full. Try getting rid of something.");
+                        controller.showActionMessage("The room is empty.");
                     }
                     else
                     {
-                        if ((player.getLocation()).roomEmpty())
-                        {
-                            controller.showActionMessage("The room is empty.");
-                        }
-                        else
-                        {
-                            Item grabItem = choosePickupItem();
-                            player.pickUp(grabItem);
-                            (player.getLocation()).removeItem(grabItem);
-                            controller.showActionMessage("Grabbed the item " + grabItem.getDesc());
-                        }
+                        Item grabItem = choosePickupItem();
+                        player.pickUp(grabItem);
+                        (player.getLocation()).removeItem(grabItem);
+                        controller.showActionMessage("Grabbed the item " + grabItem.getDesc());
                     }
                 }
-                // Toss Item
+                break;
+            case Command.DROP:
+                if (player.areHandsEmpty())
+                {
+                    controller.showActionMessage("You have nothing to drop.");
+                }
                 else
                 {
-                    if (key == Command.DROP)
-                    {
-                        if (player.areHandsEmpty())
-                        {
-                            controller.showActionMessage("You have nothing to drop.");
-                        }
-                        else
-                        {
-                            Item dropItem = chooseDropItem();
-                            controller.showActionMessage("Dropped " + player.drop(dropItem));
-                        }
-                    }
+                    Item dropItem = chooseDropItem();
+                    controller.showActionMessage("Dropped " + player.drop(dropItem));
                 }
+                break;
+            case Command.SAVE:
+                controller.showActionMessage(factory.saveAdventure());
+                break;
+            default:
+                controller.showActionMessage("Sorry. Did you mean 'q'?");
+                break;
             }
         }
         controller.showActionMessage("Bye! Have a very good time!");

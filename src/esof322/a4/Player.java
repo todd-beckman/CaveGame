@@ -38,7 +38,7 @@ public class Player
      */
     public String look()
     {
-        return location.getDesc();
+        return location.getDesc() + "\n" + location.showContents();
     }
 
     /**
@@ -68,6 +68,18 @@ public class Player
     public boolean hasItem(Item item)
     {
         return inventory.contains(item);
+    }
+    
+    public boolean hasKey()
+    {
+        for (Item i: inventory)
+        {
+            if (i instanceof Key)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

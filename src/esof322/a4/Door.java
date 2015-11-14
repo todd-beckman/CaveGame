@@ -15,46 +15,36 @@ package esof322.a4;
 
 public class Door implements CaveSite
 {
-    /**
-     * In this implementation doors are always locked. A player must have the
-     * correct key to get through a door. Doors automatically lock after a
-     * player passes through.
-     */
-    private Key key;
 
-    /** The door's location. */
     private CaveSite outSite;
     private CaveSite inSite;
-    
-    private int id;
+    private Key key;
 
-    /** We can construct a door at the site. */
-    public Door(CaveSite out, CaveSite in, Key k)
+    /**
+     * Constructs a door 
+     * @param out
+     * @param in
+     */
+    public Door(CaveSite out, CaveSite in, Key key)
     {
         outSite = out;
         inSite = in;
-        key = k;
-        key.getID();
-    }
-    
-    public int getID()
-    {
-        return id;
+        this.key = key;
     }
     
     public CaveSite getOrigin()
     {
         return inSite;
     }
+
+    public CaveSite getDestination()
+    {
+        return outSite;
+    }
     
     public Key getKey()
     {
         return key;
-    }
-    
-    public CaveSite getDestination()
-    {
-        return outSite;
     }
     
     public String getName()

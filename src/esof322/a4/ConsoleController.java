@@ -64,6 +64,11 @@ public class ConsoleController implements Controller
             }
         }
         while (choice < 0 && options.length < choice + 1);
+        //  For some reason this can still happen?
+        if (choice < 0)
+        {
+            return chooseBetween(options);
+        }
         return choice;
     }
 

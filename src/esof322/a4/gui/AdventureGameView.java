@@ -2,7 +2,6 @@ package esof322.a4.gui;
 
 import BreezySwing.GBFrame;
 import esof322.a4.AdventureGame;
-import esof322.a4.Item;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,7 +53,6 @@ public class AdventureGameView extends GBFrame
     JFrame popup;
     JComboBox<String> itemBox;
     JButton itemSelectButton;
-    Item item;
 
     AdventureGameModelFacade facade;
     
@@ -149,7 +147,6 @@ public class AdventureGameView extends GBFrame
         popup = new JFrame("Choose one");
 
         popup.add(itemBox);
-        item = null;
 
         itemSelectButton = new JButton("This one!");
         itemSelectButton.addActionListener(new ActionListener()
@@ -157,18 +154,18 @@ public class AdventureGameView extends GBFrame
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-                popup.notifyAll();
+                facade.notifyAll();
             }
         });
 
         popup.add(itemSelectButton);
         popup.setVisible(true);
 
-        synchronized (popup)
+        synchronized (facade)
         {
             try
             {
-                while (item == null)
+                while (true)
                 {
                     this.wait();
                 }

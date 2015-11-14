@@ -35,12 +35,12 @@ public class Room implements CaveSite
     public Room(String description)
     {
         this.description = description;
-        side[Direction.NORTH] = new Wall();
-        side[Direction.EAST] = new Wall();
-        side[Direction.SOUTH] = new Wall();
-        side[Direction.WEST] = new Wall();
-        side[Direction.UP] = new Wall();
-        side[Direction.DOWN] = new Wall();
+        side[0] = new Wall();
+        side[1] = new Wall();
+        side[2] = new Wall();
+        side[3] = new Wall();
+        side[4] = new Wall();
+        side[5] = new Wall();
     }
     
     public String getName()
@@ -132,6 +132,11 @@ public class Room implements CaveSite
             sb.append(str);
             sb.append("\n");
         }
+        return sb.toString();
+    }
+    public String showContents()
+    {
+        StringBuilder sb = new StringBuilder();
         sb.append("\nRoom Contents: ");
         for (Item i : contents)
         {

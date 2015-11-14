@@ -49,7 +49,12 @@ public class Command
     public static final char QUIT = 'q';
     
     /**
-     * The character mappting to the save instruction
+     * The character mapping to the save instruction
      */
-    public static final char SAVE = 's';
+    public static final char SAVE = 'p';
+    
+    /**
+     * The character mapping to the interact instruction
+     */
+    public static final char INTERACT = 'i';
 }
