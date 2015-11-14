@@ -1,0 +1,39 @@
+addroom:You are standing outside, on the edge of a cliff;~A creek runs alongside the cliff.~A cave opens straight down (outside).
+addroom:The darkness is pierced by a bright light overhead.~There is a narrow, dark passage to the east (r1).
+addroom:You are in a gloomy oval-shaped room with grey walls.~There is a dim light to the west~and a dark, narrow hole to the east (r2).
+addroom:You really need your flashlight here.~There is a wide passage that quickly narrows~to the west, a bright opening to the east,~and a deep hole that appears to have no bottom~in the middle of the room (r3).
+addroom:There is what looks like a giant grizzly bear~skull in a corner. A passages leads to the west,~another one to the north, and a slippery route~goes down steeply. You can hear the shrieks of bats (r4).
+addroom:There is a dim light from above and the shrieks~are clearly coming from a passageway to the east (r5).
+addroom:The ceiling is full of bats.~You should put your hat on your head (r6).
+addroom:This room is very damp. There are puddles on the floor~and a steady dripping from (r7).
+addroom:A lizard scampers passed you--or is it a snake?~A narrow passage runs to the east and an even narrower one~runs to the west (r8).
+addroom:Room (r9).
+addroom:It looks like someone has been here.~There is a pile of candy wrappers on the floor.~Wait--there is a trap door on the floor! But it is locked (r10).
+addroom:This room is very dark. You can just barely see (r11).
+addkey:A shiny gold key
+putkey:0:6
+puttreasure:11
+putplayer:0
+adddoor:10:11:0
+setside:0:5:1
+setside:1:4:0
+setside:1:1:2
+setside:2:3:1
+setside:2:1:3
+setside:3:3:2
+setside:3:1:4
+setside:3:5:5
+setside:4:3:3
+setside:4:5:7
+setside:5:4:3
+setside:5:1:6
+setside:6:3:5
+setside:7:4:4
+setside:4:0:8
+setside:8:2:4
+setside:8:3:9
+setside:8:1:10
+setside:9:1:8
+setside:10:3:8
+setside:10:5:12
+setside:11:4:12
