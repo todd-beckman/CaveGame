@@ -45,6 +45,7 @@ public class Gate extends Door//implements Observer
         int i = indexOf(swtch);
         if (-1 < i)
         {
+            System.out.println("Gate " + id + " flipped.");
             actualStates[i] = switches[i].getState();
         }
     }

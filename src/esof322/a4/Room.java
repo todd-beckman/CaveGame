@@ -76,6 +76,10 @@ public class Room implements CaveSite
     
     public String interact()
     {
+        if (interactables.size() == 0)
+        {
+            return "There is nothing to interact with in here!";
+        }
         StringBuilder sb = new StringBuilder();
         for (Interactable i: interactables)
         {

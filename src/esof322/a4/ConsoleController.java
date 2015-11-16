@@ -95,7 +95,7 @@ public class ConsoleController implements Controller
         System.out.println("Room contains:");
         for (String item: contents)
         {
-            System.out.println(item);
+            System.out.println("  " + item);
         }
     }
 
@@ -105,7 +105,7 @@ public class ConsoleController implements Controller
         System.out.println("Interactions:");
         for (String object: interactables)
         {
-            System.out.println(object);
+            System.out.println("  " + object);
         }
     }
     
@@ -115,7 +115,7 @@ public class ConsoleController implements Controller
         System.out.println("You are holding:");
         for (String item: contents)
         {
-            System.out.println(item);
+            System.out.println("  " + item);
         }
     }
 }

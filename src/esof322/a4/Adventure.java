@@ -53,19 +53,18 @@ public class Adventure
     
     public String saveAdventure()
     {
-        return "The save feature of this game does not function quite yet. Sorry!";
-//        try
-//        {
-//            FileWriter writer = new FileWriter(factory.getSaveLocation());
-//            writer.write(adventureToString());
-//            writer.close();
-//            return "Saved game to " + factory.getSaveLocation();
-//        }
-//        catch (IOException e)
-//        {
-//            return "Could not save game to " + factory.getSaveLocation()
-//                + " -- Maybe it is open elsewhere?";
-//        }
+        try
+        {
+            FileWriter writer = new FileWriter(factory.getSaveLocation());
+            writer.write(adventureToString());
+            writer.close();
+            return "Saved game to " + factory.getSaveLocation();
+        }
+        catch (IOException e)
+        {
+            return "Could not save game to " + factory.getSaveLocation()
+                + " -- Maybe it is open elsewhere?";
+        }
     }
 
     /**
@@ -144,6 +143,10 @@ public class Adventure
                         rooms.get(integer(args[1])),
                         rooms.get(integer(args[2])),
                         gateKey);
+                for (Switch swtch: watchedSwitches)
+                {
+                    swtch.addObserver(gate);
+                }
                 gates.add(gate);
                 break;
             //  setside:(GATE:|DOOR:)CAVESITE 1:CAVESITE 2

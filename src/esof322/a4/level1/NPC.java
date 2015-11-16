@@ -15,7 +15,7 @@ public class NPC implements Interactable
     @Override
     public String interact()
     {
-        return phrase;
+        return "NPC: " + phrase;
     }
     @Override
     public String getName()

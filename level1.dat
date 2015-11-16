@@ -19,7 +19,7 @@ setside:7:0:8
 setside:8:2:7
 addkey:A durable lock-pick. It will have to do.
 putkey:0:8
-addtreasrue:An arbitrarily valuable item
+addtreasure:An arbitrarily valuable item
 puttreasure:9
 adddoor:0:9:0
 setside:door:0:0:0
@@ -42,8 +42,8 @@ addgate:6:5:1:0
 setside:gate:4:6:3
 setside:gate:4:5:1
 addgate:5:7:0:0:1:0
-setside:gate:4:5:0
-setside:gate:4:7:2
+setside:gate:5:5:0
+setside:gate:5:7:2
 addnpc:1:If you press the switch ahead, you may need to use another way out.
 addnpc:3:The gates in this puzzle react to the switches. Keep track of their states!
 addnpc:7:Good job getting this far! Grab the key and head back to the entrance!

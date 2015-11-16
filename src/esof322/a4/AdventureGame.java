@@ -216,6 +216,9 @@ public class AdventureGame
                     controller.showStatusMessage("Dropped " + player.drop(dropItem));
                 }
                 break;
+            case Command.INTERACT:
+                controller.showStatusMessage(location.interact());
+                break;
             case Command.SAVE:
                 controller.showStatusMessage(adventure.saveAdventure());
                 break;
