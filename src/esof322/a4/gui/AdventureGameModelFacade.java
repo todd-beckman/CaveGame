@@ -17,30 +17,18 @@ public class AdventureGameModelFacade implements Controller
     private AdventureGameView gui;
 
     /**
-     * The current room's description
-     */
-    private String roomView = "";
-
-    /**
-     * The most recent action taken
-     */
-    private String action = "";
-    
-    private String items = "";
-
-    /**
      * Prevent button control for events such as input
      */
     private boolean lockCommands = false;
 
     /**
-     * The input mechanism to interface with the game
+     * The object used to lock synchronized messages
      **/
     private Object messager;
 
-    public AdventureGameModelFacade()
+    public AdventureGameModelFacade(AdventureGameView gui)
     {
-        this.gui = new AdventureGameView(this);
+        this.gui = gui;
     }
     
     public AdventureGameView getView()
@@ -101,40 +89,6 @@ public class AdventureGameModelFacade implements Controller
         sendCommand(Command.DROP);
     }
 
-    public void setItems(String items)
-    {
-        this.items = items;
-    }
-    
-    public String getItems()
-    {
-        return items;
-    }
-    
-    public String getAction()
-    {
-        return action;
-    }
-    
-    @Override
-    public void showActionMessage(String message)
-    {
-        action = message;
-        gui.displayCurrentInfo();
-    }
-
-    @Override
-    public void showStatusMessage(String message)
-    {
-        this.roomView = message;
-        gui.displayCurrentInfo();
-    }
-    
-    public String getStatus()
-    {
-        return roomView;
-    }
-
     @Override
     public char receiveChar()
     {
@@ -157,9 +111,41 @@ public class AdventureGameModelFacade implements Controller
 
 
     @Override
-    public int chooseBetween(String[] options)
+    public int chooseBetween(String subject, String[] options)
     {
-        return gui.getChoice(options);
+        return gui.getChoice(subject, options);
     }
 
+    @Override
+    public void showControls(){ /* lol */}
+
+    @Override
+    public void showStatusMessage(String message)
+    {
+        gui.setStatusMessage(message);
+    }
+
+    @Override
+    public void showRoomDescription(String description)
+    {
+        gui.setRoomDescription(description);
+    }
+
+    @Override
+    public void showRoomContents(String[] contents)
+    {
+        gui.setRoomContents(contents);
+    }
+
+    @Override
+    public void showRoomInteractables(String[] interactables)
+    {
+        gui.setInteractables(interactables);
+    }
+
+    @Override
+    public void showPlayerInventory(String[] inventory)
+    {
+        gui.setInventory(inventory);
+    }
 }

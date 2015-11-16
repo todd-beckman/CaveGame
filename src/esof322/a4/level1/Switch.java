@@ -1,10 +1,10 @@
-package esof322.a4.interact;
+package esof322.a4.level1;
 
 import java.util.ArrayList;
 
-public class Switch implements Subject, Interactable
+public class Switch implements Interactable//, Subject
 {
-    private ArrayList<Observer> observers;
+    private ArrayList<Gate> gates;
     
     private boolean active = false;
     
@@ -12,9 +12,10 @@ public class Switch implements Subject, Interactable
     
     private int id = SWITCH_COUNT++;
     
-    public Switch ()
+    public Switch (boolean startValue)
     {
-        observers = new ArrayList<Observer>();
+        gates = new ArrayList<Gate>();
+        active = startValue;
     }
     
     public int getID()
@@ -27,18 +28,16 @@ public class Switch implements Subject, Interactable
         return active;
     }
     
-    @Override
-    public void addObserver(Observer observer)
+    public void addObserver(Gate gate)
     {
-        observers.add(observer);
+        gates.add(gate);
     }
     
-    @Override
     public void notifyObservers()
     {
-        for (Observer o: observers)
+        for (Gate gate: gates)
         {
-            o.update();
+            gate.update(this);
         }
     }
 
@@ -47,5 +46,17 @@ public class Switch implements Subject, Interactable
         active = !active;
         notifyObservers();
         return "Switch " + id + " was turned " + (active? "on" : "off") + ".";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Switch";
+    }
+
+    @Override
+    public String getDesc()
+    {
+        return "Number " + id;
     }
 }

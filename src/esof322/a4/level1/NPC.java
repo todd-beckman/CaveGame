@@ -1,4 +1,4 @@
-package esof322.a4.interact;
+package esof322.a4.level1;
 
 public class NPC implements Interactable
 {
@@ -17,5 +17,14 @@ public class NPC implements Interactable
     {
         return phrase;
     }
-
+    @Override
+    public String getName()
+    {
+        return "NPC";
+    }
+    @Override
+    public String getDesc()
+    {
+        return phrase;
+    }
 }

@@ -9,75 +9,76 @@ import esof322.a4.Treasure;
 
 public class Level1Factory implements Factory
 {
+    private final String NEW_FILE_LOCATION = "level1.dat";
+    private final String SAVE_LOCATION = "save1.dat";
 
     @Override
-    public Player createAdventure()
+    public String getStartMessage()
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String saveAdventure()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Player loadAdventure(String filename)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Room createRoom(String description)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Door createDoor(Room from, Room into, Key key)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Key createKey(String description)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Treasure createTreasure(String description)
-    {
-        // TODO Auto-generated method stub
-        return null;
+        return "Welcome to Level 1! Now that you understand the basics of the game, it's\n"
+                + "time to step it up a notch. There is an arbitrarily valueable item\n"
+                + "locked away in the shed. Your job is to fetch the key hidden in the\n"
+                + "depths of a secret Rocket hideout so you can steal their treasure.\n"
+                + "Can you do it?";
     }
 
     @Override
     public String getNewAdventureLocation()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return NEW_FILE_LOCATION;
     }
-
+    
     @Override
     public String getSaveLocation()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return SAVE_LOCATION;
+    }
+    
+    @Override
+    public Room createRoom(String description)
+    {
+        return new Room(description);
+    }
+    
+    @Override
+    public Door createDoor(Room from, Room into, Key key)
+    {
+        if (key instanceof GateKey)
+        {
+            return new Gate(from, into, (GateKey)key);
+        }
+        return new Door(from, into, key);
+    }
+    
+
+    public Key createKey(String desc)
+    {
+        return new Key(desc);
+    }
+    
+    @Override
+    public Treasure createTreasure(String description)
+    {
+        return new Treasure(description);
     }
 
     @Override
-    public void readCommand(String command, String... args)
+    public Player createPlayer()
     {
-        // TODO Auto-generated method stub
-        
+        return new Player();
     }
 
+    @Override
+    public Interactable createInteractable(String description)
+    {
+        switch (description)
+        {
+        case "true":
+            return new Switch(true);
+        case "false":
+            return new Switch(false);
+        default:
+            return new NPC(description);
+        }
+    }
 }

@@ -1,86 +1,92 @@
 package esof322.a4.gui;
 
-import BreezySwing.GBFrame;
-import esof322.a4.AdventureGame;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayDeque;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
+import javax.swing.JPanel;
 
-public class AdventureGameView extends GBFrame
+public class AdventureGameView extends JFrame
 {
     private static final long serialVersionUID = 1L;
-
-    // Window objects --------------------------------------
-    JLabel welcomeLabel = addLabel(
-            "Welcome to the Adventure Game " + "(inspired by an old game called the Colossal Cave Adventure)."
-                    + " Java implementation Copyright (c) 1999-2012 by James M. Bieman",
-            1, 1, 5, 1);
-
-    JLabel viewLabel = addLabel("Your View: ", 2, 1, 1, 1);
-    JTextArea viewArea = addTextArea("Start", 3, 1, 3, 7);
-
-    JLabel carryingLabel = addLabel("You are carrying: ", 6, 4, 1, 1);
-    JTextArea carryingArea = addTextArea("Nothing", 7, 4, 3, 3);
-
-    JLabel actionLabel = addLabel("Action:", 2, 4, 1, 1);
-    JTextArea actionArea = addTextArea("Action", 3, 4, 3, 3);
-    JLabel separator1 = addLabel("-----------------------------------------------------------------", 10, 1, 4, 1);
-
-    JLabel choiceLabel = addLabel("Choose a direction, pick-up, or drop an item", 11, 1, 5, 1);
-
-    JButton grabButton = addButton("Grab an item", 12, 5, 1, 1);
-    JButton dropButton = addButton("Drop an item", 13, 5, 1, 1);
-
-    JButton northButton = addButton("North", 12, 2, 1, 1);
-    JButton southButton = addButton("South", 14, 2, 1, 1);
-    JButton eastButton = addButton("East", 13, 3, 1, 1);
-    JButton westButton = addButton("West", 13, 1, 1, 1);
-    JButton upButton = addButton("Up", 12, 3, 1, 1);
-    JButton downButton = addButton("Down", 14, 3, 1, 1);
-
-    JTextArea textInput = addTextArea("1", 15, 3, 1, 1);
-    JButton textInputButton = addButton("Submit", 15, 4, 1, 1);
-
-    // Used for item dialogue
-    JFrame popup;
-    JComboBox<String> itemBox;
-    JButton itemSelectButton;
-
-    AdventureGameModelFacade facade;
     
-    // Constructor-----------------------------------------------
-
-    public AdventureGameView(AdventureGameModelFacade facade)
+    private AdventureGameModelFacade facade;
+    
+    private ArrayDeque<Character> buffer = new ArrayDeque<Character>();
+    public char getInput()
     {
-        this.facade = facade;
-        
-        
+        synchronized(facade)
+        {
+            try
+            {
+                while (buffer.isEmpty())
+                {
+                    facade.wait();
+                }
+            }
+            catch (InterruptedException e) {}
+        }
+        return buffer.pollFirst();
+    }
+    private void queueInput(char c)
+    {
+        buffer.addLast(c);
+    }
+    
+    private String statusMessage = "";
+    public void setStatusMessage(String message)
+    {
+        this.statusMessage = message;
+    }
+    
+    private String roomDescription = "";
+    public void setRoomDescription(String description)
+    {
+        this.roomDescription = description;
+    }
+    
+    private String[] roomContents = {};
+    public void setRoomContents(String[] contents)
+    {
+        this.roomContents = contents;
+    }
+    
+    private String[] playerInventory = {};
+    public void setInventory(String[] inventory)
+    {
+        this.setInventory(inventory);
+    }
+    
+    private String[] roomInteractables = {};
+    public void setInteractables(String[] interactables)
+    {
+        this.roomInteractables = interactables;
+    }
+    
+    Canvas canvas = new Canvas();
+    class Canvas extends JPanel
+    {
+        private static final long serialVersionUID = 1L;
+        public void paintComponent(Graphics g)
+        {
+            g.fillRect(20, 20, 100, 200);
+        }
+    }
+    
+    public AdventureGameView()
+    {
         setTitle("Adventure Game");
-
-        viewArea.setEditable(false);
-        carryingArea.setEditable(false);
+        setContentPane(canvas);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(800, 600);
 
         addKeyListener(new KeyListener()
         {
             public void keyPressed(KeyEvent e)
             {
-            }
-
-            public void keyReleased(KeyEvent e)
-            {
-            }
-
-            // Only care about keys typed for now
-            public void keyTyped(KeyEvent e)
-            {
+                System.out.println("Typed " + e.getKeyCode());
                 switch (e.getKeyCode())
                 {
                 case KeyEvent.VK_UP:
@@ -121,84 +127,31 @@ public class AdventureGameView extends GBFrame
                 }
             }
 
+            public void keyReleased(KeyEvent e){}
+
+            public void keyTyped(KeyEvent e){}
         });
-
-        // default:
-        // if (buttonObj == textInputButton)
-        // {
-        // model.takeInput(textInput.getText());
-        // textInput.replaceRange("", 0, textInput.getText().length());
-        // }
-        // break;
-        // }
+        
+        setVisible(true);
     }
-
-    /**
-     * Allows the player to pick between a list of things
-     * @param inventory
-     * @return
-     */
-    public int getChoice(String[] options)
+    
+    public int getChoice(String subject, String[] options)
     {
-        popup.setSize(300, 200);
-
-        itemBox = new JComboBox<String>(options);
-
-        popup = new JFrame("Choose one");
-
-        popup.add(itemBox);
-
-        itemSelectButton = new JButton("This one!");
-        itemSelectButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent arg0)
-            {
-                facade.notifyAll();
-            }
-        });
-
-        popup.add(itemSelectButton);
-        popup.setVisible(true);
-
-        synchronized (facade)
-        {
-            try
-            {
-                while (true)
-                {
-                    this.wait();
-                }
-            }
-            catch (InterruptedException e)
-            {
-            }
-        }
-
-        popup.setVisible(false);
-        popup = null;
-        return itemBox.getSelectedIndex();
+        // TODO Auto-generated method stub
+        return 0;
     }
-
-    /**
-     * Updates the user interface
-     */
-    public void displayCurrentInfo()
-    {
-        viewArea.setText(facade.getStatus());
-        carryingArea.setText(facade.getItems());
-        actionArea.setText(facade.getAction());
-    }
-
+    
     public static void main(String[] args)
     {
-        AdventureGameModelFacade facade = new AdventureGameModelFacade();
-        AdventureGame game = new AdventureGame(facade);
+        new AdventureGameView();
         
-        AdventureGameView view = facade.getView();
-        view.setSize(800, 600); /* was 400, 250 */
-        view.setVisible(true);
-        
-        game.startQuest();
+//        AdventureGameModelFacade facade = new AdventureGameModelFacade();
+//        AdventureGame game = new AdventureGame(facade);
+//        
+//        AdventureGameView view = facade.getView();
+//        view.setSize(800, 600); /* was 400, 250 */
+//        view.setVisible(true);
+//        
+//        game.startQuest();
     }
 }

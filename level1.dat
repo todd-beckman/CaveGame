@@ -1,4 +1,4 @@
-addroom:A door straight ahead is locked and a ladder leads down.
+addroom:Outside. The shed straight ahead is locked, but a ladder leads into the hideout underground.
 addroom:There is a gate to the north and an opening to the east. Maybe the person here can help us?
 addroom:A ladder leads back up. Halls lead north, east, and west
 addroom:A gate straight ahead might be open, but the west is open. I wonder if this person might have advice.
@@ -8,6 +8,7 @@ addroom:A switch might help with the gates to the south and west.
 addroom:Another person, this far in? Head down to the basement first! Then leave through the southern entrance.
 addroom:There is the key! Wait a minute...
 addroom:The whole time, it was at the front entrance. I could have picked the lock myself.
+putplayer:0
 setside:1:1:2
 setside:2:3:1
 setside:2:1:3
@@ -17,8 +18,8 @@ setside:5:2:2
 setside:7:0:8
 setside:8:2:7
 addkey:A durable lock-pick. It will have to do.
-putkey:8
-putplayer:0
+putkey:0:8
+addtreasrue:An arbitrarily valuable item
 puttreasure:9
 adddoor:0:9:0
 setside:door:0:0:0

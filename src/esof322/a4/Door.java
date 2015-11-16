@@ -16,8 +16,8 @@ package esof322.a4;
 public class Door implements CaveSite
 {
 
-    private CaveSite outSite;
-    private CaveSite inSite;
+    protected CaveSite from;
+    protected CaveSite into;
     private Key key;
 
     /**
@@ -25,21 +25,21 @@ public class Door implements CaveSite
      * @param out
      * @param in
      */
-    public Door(CaveSite out, CaveSite in, Key key)
+    public Door(CaveSite from, CaveSite into, Key key)
     {
-        outSite = out;
-        inSite = in;
+        this.from = from;
+        this.into = into;
         this.key = key;
     }
     
     public CaveSite getOrigin()
     {
-        return inSite;
+        return into;
     }
 
     public CaveSite getDestination()
     {
-        return outSite;
+        return from;
     }
     
     public Key getKey()
@@ -57,14 +57,14 @@ public class Door implements CaveSite
         if (player.hasItem(key))
         {
             String output = "Your key works! The door creaks open,\nand slams behind you after you pass through.";
-            if (player.getLocation() == outSite)
+            if (player.getLocation() == from)
             {
-                inSite.enter(player);
+                into.enter(player);
                 return output;
             }
-            if (player.getLocation() == inSite)
+            if (player.getLocation() == into)
             {
-                outSite.enter(player);
+                from.enter(player);
                 return output;
             }
             return "You cannot use this door from there!";

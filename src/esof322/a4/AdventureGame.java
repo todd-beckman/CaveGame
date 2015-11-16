@@ -70,7 +70,7 @@ public class AdventureGame
         {
             items[i] = contents[i].getName() + ": " + contents[i].getDesc();
         }
-        return contents[controller.chooseBetween(items)];
+        return contents[controller.chooseBetween("Pick up which item?", items)];
     }
 
     /**
@@ -85,7 +85,7 @@ public class AdventureGame
         {
             items[i] = inventory[i].getName() + ": " + inventory[i].getDesc();
         }
-        return inventory[controller.chooseBetween(items)];
+        return inventory[controller.chooseBetween("Pick up which item?", items)];
     }
 
     /**
@@ -93,15 +93,10 @@ public class AdventureGame
      */
     public void startQuest()
     {
-
-        //  TODO: dialogue to choose whether to load from file
-        //  requires checking to see if save file exists
-        //  TODO: dialogue to choose which level to load
-        
         int choice = -1;
-        controller.showActionMessage("Which adventure will you be playing today?");
         String[] loadOptions = {"Start Level 0", "Start Level 1"};
-        choice = controller.chooseBetween(loadOptions);
+        choice = controller.chooseBetween(
+                "Which adventure will you be playing today?", loadOptions);
         
         switch (choice)
         {
@@ -111,24 +106,28 @@ public class AdventureGame
         case 1:
             factory = new Level1Factory();
             break;
+            
+        //  this should not happen
         default:
-            System.out.println("Oops! Something broke! That factory does not exist!");
+            System.out.println("Oops! Something broke! That level does not exist!");
             System.exit(1);
         }
+        
+        Adventure adventure = new Adventure(factory);
         
         if (new File(factory.getSaveLocation()).exists())
         {
             choice = -1;
-            controller.showActionMessage("Would you like to resume your adventure?");
             String[] resumeOptions = {"Resume", "New Game"};
-            choice = controller.chooseBetween(resumeOptions);
+            choice = controller.chooseBetween(
+                    "Would you like to resume your adventure?", resumeOptions);
             switch (choice)
             {
             case 0:
-                player = factory.loadAdventure(factory.getSaveLocation());
+                player = adventure.loadAdventure();
                 break;
             case 1:
-                player = factory.createAdventure();
+                player = adventure.newAdventure();
                 break;
             default:
                 System.out.println("Oops! Something broke! Must pick Resume or New Game!");
@@ -137,48 +136,51 @@ public class AdventureGame
         }
         else
         {
-            player = factory.createAdventure();
+            player = adventure.newAdventure();
         }
         
+        //  In case something broke, don't let the game go on.
         if (player == null)
         {
-            System.out.println("Oops!");
+            System.out.println("Oops! Loading didn't seem to go right.");
+            System.exit(1);
         }
-                
+        
+        controller.showStatusMessage(factory.getStartMessage());
+        
         boolean gameon = true;
 
         //  Game loop
         while (gameon)
         {
-            controller.showStatusMessage(player.look() +
-                    "\n\nYou are carrying: " + player.showInventory());
-
+            Room location = player.getLocation();
+            controller.showRoomDescription(location.getDesc());
+            controller.showRoomContents(location.showContents());
+            controller.showRoomInteractables(location.showInteractables());
+            controller.showPlayerInventory(player.showInventory());
 
             // Display the controls
-            if (controller instanceof ConsoleController)
-            {
-                controller.showActionMessage("Which way (n,s,e,w,u,d),\n" + " or grab (g) or toss (t) an item,\n" + " or quit (q)?");
-            }
+            controller.showControls();
             
             switch (controller.receiveChar())
             {
             case Command.NORTH:
-                controller.showActionMessage(player.go(Direction.NORTH));
+                controller.showStatusMessage(player.go(Direction.NORTH));
                 break;
             case Command.EAST:
-                controller.showActionMessage(player.go(Direction.EAST));
+                controller.showStatusMessage(player.go(Direction.EAST));
                 break;
             case Command.SOUTH:
-                controller.showActionMessage(player.go(Direction.SOUTH));
+                controller.showStatusMessage(player.go(Direction.SOUTH));
                 break;
             case Command.WEST:
-                controller.showActionMessage(player.go(Direction.WEST));
+                controller.showStatusMessage(player.go(Direction.WEST));
                 break;
             case Command.UP:
-                controller.showActionMessage(player.go(Direction.UP));
+                controller.showStatusMessage(player.go(Direction.UP));
                 break;
             case Command.DOWN:
-                controller.showActionMessage(player.go(Direction.DOWN));
+                controller.showStatusMessage(player.go(Direction.DOWN));
                 break;
             case Command.QUIT:
                 gameon = false;
@@ -186,43 +188,43 @@ public class AdventureGame
             case Command.GRAB:
                 if (player.areHandsFull())
                 {
-                    controller.showActionMessage("Your hands are full. Try getting rid of something.");
+                    controller.showStatusMessage("Your hands are full. Try getting rid of something.");
                 }
                 else
                 {
                     if ((player.getLocation()).roomEmpty())
                     {
-                        controller.showActionMessage("The room is empty.");
+                        controller.showStatusMessage("The room is empty.");
                     }
                     else
                     {
                         Item grabItem = choosePickupItem();
                         player.pickUp(grabItem);
                         (player.getLocation()).removeItem(grabItem);
-                        controller.showActionMessage("Grabbed the item " + grabItem.getDesc());
+                        controller.showStatusMessage("Grabbed the item " + grabItem.getDesc());
                     }
                 }
                 break;
             case Command.DROP:
                 if (player.areHandsEmpty())
                 {
-                    controller.showActionMessage("You have nothing to drop.");
+                    controller.showStatusMessage("You have nothing to drop.");
                 }
                 else
                 {
                     Item dropItem = chooseDropItem();
-                    controller.showActionMessage("Dropped " + player.drop(dropItem));
+                    controller.showStatusMessage("Dropped " + player.drop(dropItem));
                 }
                 break;
             case Command.SAVE:
-                controller.showActionMessage(factory.saveAdventure());
+                controller.showStatusMessage(adventure.saveAdventure());
                 break;
             default:
-                controller.showActionMessage("Sorry. Did you mean 'q'?");
+                controller.showStatusMessage("Sorry. Did you mean 'q'?");
                 break;
             }
         }
-        controller.showActionMessage("Bye! Have a very good time!");
+        controller.showStatusMessage("Bye! Have a very good time!");
     }
 
     /**
@@ -233,9 +235,6 @@ public class AdventureGame
     public AdventureGame(Controller view)
     {
         this.controller = view;
-        view.showStatusMessage("Welcome to the Adventure Game,\n"
-                + "which is inspired by an old game called the Colossal Cave Adventure.\n"
-                + "Java implementation Copyright (c) 1999 - 2012 by James M. Bieman\n");
     }
 
     public static void main(String args[]) throws IOException

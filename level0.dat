@@ -12,6 +12,7 @@ addroom:It looks like someone has been here.~There is a pile of candy wrappers o
 addroom:This room is very dark. You can just barely see (r11).
 addkey:A shiny gold key
 putkey:0:6
+addtreasure:A bag filled with gold bars
 puttreasure:11
 putplayer:0
 adddoor:10:11:0
@@ -35,5 +36,5 @@ setside:8:3:9
 setside:8:1:10
 setside:9:1:8
 setside:10:3:8
-setside:10:5:12
-setside:11:4:12
+setside:door:0:10:5
+setside:door:0:11:4

@@ -1,8 +1,8 @@
 package esof322.a4;
 
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 
-import esof322.a4.util.Direction;
+import esof322.a4.level1.Interactable;
 
 /**
  * Adventure Game Program Code Copyright (c) 1999 James M. Bieman
@@ -21,9 +21,10 @@ import esof322.a4.util.Direction;
 
 public class Room implements CaveSite
 {
-    private final String description;
-    private CaveSite[] side = new CaveSite[6];
-    private ArrayDeque<Item> contents = new ArrayDeque<Item>();
+    protected final String description;
+    protected CaveSite[] side = new CaveSite[6];
+    protected ArrayList<Item> contents = new ArrayList<Item>();
+    protected ArrayList<Interactable> interactables = new ArrayList<Interactable>();
 
     /**
      * Constructs a Room. This default constructor is not recommended due to
@@ -48,35 +49,6 @@ public class Room implements CaveSite
         return "Room";
     }
 
-    /**
-     * Alias constructor which allows the six sides to be set by the
-     * constructor, preventing any need for unnecessary memory allocation.
-     * 
-     * @param north
-     *            The CaveSite found to the north of this room
-     * @param east
-     *            The CaveSite found to the east of this room
-     * @param south
-     *            The CaveSite found to the south of this room
-     * @param west
-     *            The CaveSite found to the west of this room
-     * @param up
-     *            The CaveSite found above this room
-     * @param down
-     *            The CaveSite found below this room
-     */
-    public Room(String description, CaveSite north, CaveSite east, CaveSite south, CaveSite west, CaveSite up,
-            CaveSite down)
-    {
-        side[Direction.NORTH] = north;
-        side[Direction.EAST] = east;
-        side[Direction.SOUTH] = south;
-        side[Direction.WEST] = west;
-        side[Direction.UP] = up;
-        side[Direction.DOWN] = down;
-        this.description = description;
-    }
-
     public CaveSite[] getSides()
     {
         return side;
@@ -87,14 +59,30 @@ public class Room implements CaveSite
         side[direction] = m;
     }
 
-    public void addItem(Item theItem)
+    public void addItem(Item item)
     {
-        contents.add(theItem);
+        contents.add(item);
     }
 
-    public void removeItem(Item theItem)
+    public void removeItem(Item item)
     {
-        contents.remove(theItem);
+        contents.remove(item);
+    }
+    
+    public void addInteractable(Interactable interactable)
+    {
+        interactables.add(interactable);
+    }
+    
+    public String interact()
+    {
+        StringBuilder sb = new StringBuilder();
+        for (Interactable i: interactables)
+        {
+            sb.append(i.interact());
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
     public boolean roomEmpty()
@@ -134,16 +122,27 @@ public class Room implements CaveSite
         }
         return sb.toString();
     }
-    public String showContents()
+    
+    public String[] showContents()
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\nRoom Contents: ");
-        for (Item i : contents)
+        String[] items = new String[contents.size()];
+        for (int i = 0; i < items.length; i++)
         {
-            sb.append(i.getDesc());
-            sb.append(" ");
+            Item item = contents.get(i);
+            items[i] = item.getName() + ": " + item.getDesc();
         }
-        return sb.toString();
+        return items;
+    }
+
+    public String[] showInteractables()
+    {
+        String[] ints = new String[interactables.size()];
+        for (int i = 0; i < ints.length; i++)
+        {
+            Interactable interactable = interactables.get(i);
+            ints[i] = interactable.getName() + ": " + interactable.getDesc();
+        }
+        return ints;
     }
 
 }

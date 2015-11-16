@@ -36,9 +36,9 @@ public class ConsoleController implements Controller
     }
     
     @Override
-    public int chooseBetween(String[] options)
+    public int chooseBetween(String subject, String[] options)
     {
-        System.out.println("Please choose between one of:");
+        System.out.println(subject);
         for (int i = 0; i < options.length; i++)
         {
             System.out.print(i + ": ");
@@ -46,7 +46,6 @@ public class ConsoleController implements Controller
         }
         int choice = -1;
         do{
-            System.out.println("What is your selection?");
             //  because it's not a Java feature
             switch (receiveChar())
             {
@@ -67,20 +66,56 @@ public class ConsoleController implements Controller
         //  For some reason this can still happen?
         if (choice < 0)
         {
-            return chooseBetween(options);
+            return chooseBetween(subject, options);
         }
         return choice;
     }
-
+    
     @Override
-    public void showActionMessage(String message)
+    public void showControls()
     {
-        System.out.println(message);
+        System.out.println("What will you do? Go (n,s,e,w,u,d)? Grab (g)? Toss(t), Save (p)? Quit (q)?");
     }
-
+    
     @Override
     public void showStatusMessage(String message)
     {
         System.out.println(message);
+    }
+
+    @Override
+    public void showRoomDescription(String message)
+    {
+        System.out.println(message);
+    }
+
+    @Override
+    public void showRoomContents(String[] contents)
+    {
+        System.out.println("Room contains:");
+        for (String item: contents)
+        {
+            System.out.println(item);
+        }
+    }
+
+    @Override
+    public void showRoomInteractables(String[] interactables)
+    {
+        System.out.println("Interactions:");
+        for (String object: interactables)
+        {
+            System.out.println(object);
+        }
+    }
+    
+    @Override
+    public void showPlayerInventory(String[] contents)
+    {
+        System.out.println("You are holding:");
+        for (String item: contents)
+        {
+            System.out.println(item);
+        }
     }
 }

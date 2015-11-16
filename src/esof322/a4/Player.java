@@ -1,6 +1,6 @@
 package esof322.a4;
 
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 /**
  * Adventure Game Program Code Copyright (c) 1999 James M. Bieman
@@ -15,7 +15,7 @@ public class Player
     private Room location;
     
     //  Used to store a dynamic inventory without gaps with constant insert, search, and delete
-    private ArrayDeque<Item> inventory = new ArrayDeque<Item>(MAXIMUM_ITEM_COUNT);
+    private ArrayList<Item> inventory = new ArrayList<Item>(MAXIMUM_ITEM_COUNT);
 
     /**
      * The maximum number of items a player is allowed to hold
@@ -124,17 +124,15 @@ public class Player
      * Formats the player's inventory into a string with each item on a new line
      * @return The player's inventory
      */
-    public String showInventory()
+    public String[] showInventory()
     {
-        StringBuilder sb = new StringBuilder();
-        for (Item item : inventory)
+        String[] items = new String[inventory.size()];
+        for (int i = 0; i < items.length; i++)
         {
-            sb.append(item.getName());
-            sb.append(": ");
-            sb.append(item.getDesc());
-            sb.append("\n");
+            Item item = inventory.get(i);
+            items[i] = item.getName() + ": " + item.getDesc();
         }
-        return sb.toString();
+        return items;
     }
 
     /**
