@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import esof322.a4.level1.Gate;
 import esof322.a4.level1.GateKey;
+import esof322.a4.level1.Interactable;
 import esof322.a4.level1.Switch;
 import esof322.a4.level1.NPC;
 
@@ -254,6 +255,26 @@ public class Adventure
                     sb.append("\n");
                 }
             }
+            for (Interactable i: rooms.get(r).getRoomInteractables())
+            {
+                if (i instanceof NPC)
+                {
+                    sb.append("addnpc:");
+                    sb.append(r);
+                    sb.append(":");
+                    sb.append(((NPC) i).getPhrase());
+                    sb.append("\n");
+                }
+                else if (i instanceof Switch)
+                {
+                    Switch s = (Switch)i;
+                    sb.append("addswitch:");
+                    sb.append(s.getState() == true ? 1: 0);
+                    sb.append(":");
+                    sb.append(r);
+                    sb.append("\n");
+                }
+            }
         }
         
         for (Door door: doors)
@@ -266,7 +287,24 @@ public class Adventure
             sb.append(keys.indexOf(door.getKey()));
             sb.append("\n");
         }
-
+        
+        for (Gate gate: gates)
+        {
+            sb.append("addgate:");
+            sb.append(rooms.indexOf(gate.getOrigin()));
+            sb.append(":");
+            sb.append(rooms.indexOf(gate.getOrigin()));
+            Switch[] switches = gate.getSwitches();
+            boolean[] desired = gate.getDesiredStates();
+            for (int i = 0; i < switches.length; i++)
+            {
+                sb.append(":");
+                sb.append(this.switches.indexOf(switches[i]));
+                sb.append(":");
+                sb.append(desired[i] == true ? 1 : 0);
+            }
+            sb.append("\n");
+        }
         
         for (int r = 0; r < rooms.size(); r++)
         {
@@ -283,20 +321,20 @@ public class Adventure
                     sb.append(rooms.indexOf((Room)sides[s]));
                     sb.append("\n");
                 }
-                else if (sides[s] instanceof Door)
+                else if (sides[s] instanceof Gate)
                 {
-                    sb.append("setside:door:");
-                    sb.append(doors.indexOf(sides[s]));
+                    sb.append("setside:gate:");
+                    sb.append(gates.indexOf(sides[s]));
                     sb.append(":");
                     sb.append(r);
                     sb.append(":");
                     sb.append(s);
                     sb.append("\n");
                 }
-                else if (sides[s] instanceof Gate)
+                else if (sides[s] instanceof Door)
                 {
-                    sb.append("setside:gate:");
-                    sb.append(gates.indexOf(sides[s]));
+                    sb.append("setside:door:");
+                    sb.append(doors.indexOf(sides[s]));
                     sb.append(":");
                     sb.append(r);
                     sb.append(":");
@@ -323,8 +361,6 @@ public class Adventure
                 sb.append("givetreasure\n");
             }
         }
-        
-
         
         return sb.toString();
     }

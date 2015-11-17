@@ -94,5 +94,14 @@ public class Gate extends Door//implements Observer
     {
         return "Gate";
     }
+    
+    public Switch[] getSwitches()
+    {
+        return switches;
+    }
 
+    public boolean[] getDesiredStates()
+    {
+        return desiredStates;
+    }
 }

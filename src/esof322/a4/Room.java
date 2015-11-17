@@ -103,6 +103,11 @@ public class Room implements CaveSite
     {
         return contents.toArray(new Item[0]);
     }
+    
+    public Interactable[] getRoomInteractables()
+    {
+        return interactables.toArray(new Interactable[0]);
+    }
 
     public String enter(Player player)
     {
