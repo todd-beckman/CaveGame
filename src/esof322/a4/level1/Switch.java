@@ -37,7 +37,6 @@ public class Switch implements Interactable//, Subject
     {
         for (Gate gate: gates)
         {
-            System.out.println("Notified a gate.");
             gate.update(this);
         }
     }
