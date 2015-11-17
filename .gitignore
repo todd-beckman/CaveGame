@@ -16,3 +16,5 @@ src/esof322/a3/
 test/esof322/a3/
 save0.dat
 save1.dat
+auxfiles/
+compile.bat

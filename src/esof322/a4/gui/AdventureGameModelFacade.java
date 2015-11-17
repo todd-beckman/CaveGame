@@ -1,7 +1,6 @@
 package esof322.a4.gui;
 
 import esof322.a4.Controller;
-import esof322.a4.util.Command;
 
 public class AdventureGameModelFacade implements Controller
 {
@@ -16,21 +15,9 @@ public class AdventureGameModelFacade implements Controller
      */
     private AdventureGameView view;
 
-    /**
-     * Prevent button control for events such as input
-     */
-    private boolean lockCommands = false;
-
-    /**
-     * The object used to lock synchronized messages
-     **/
-    private Object messager;
-
     public AdventureGameModelFacade(AdventureGameView gui)
     {
         this.view = gui;
-        
-        messager = new Object();
     }
     
     @Override
