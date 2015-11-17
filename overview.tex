@@ -1,0 +1,79 @@
+\documentclass{article}
+
+\usepackage{float}
+
+\begin{document}
+
+\title{Assignment 4: Enhanced Cave Game}
+\author{Todd Beckman}
+\date{}
+\maketitle
+
+\section*{Save Data Structure}
+
+The save data structure is a colon-separated list of instructions and
+their arguments. Each instruction must be on a new line. For this reason,
+new line and colon characters may not occur in any strings. Instead, use of 
+the `\~' symbols should be used when a new line is intended. The following 
+table describes each command and its arguments. Note that a colon separates
+each of the arguments. Excess whitespace is not permitted outside of strings.
+
+Note the use of private keys (ID's). The user must manually track the running
+list of the exact order content was added. For example, if three ``addroom''
+instructions were used, then they are addressed, in order `0', `1', and `2'
+when their use in arguments is needed.
+
+Let lowercase text be exact content in the file and let fully capitalized text
+be a type identifier. For the DIRECTION type, refer to the Direction class
+enumeration. In future implementations, use of direction words will be prefered
+over these numbers.
+
+\begin{table}[H]
+\caption{Instructions with no dependencies}
+\begin{tabular}{ | l | l | }
+\hline
+Command     & Arg1    \\ \hline
+addroom     & STRING  \\ \hline
+addkey      & STRING  \\ \hline
+addtreasure & STRING  \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{Instructions with dependencies on Table 1}
+\begin{tabular}{ | l | l | l | l | }
+\hline
+Command     & Arg1     & Arg2     &       \\ \hline
+giveplayer  & key      & KEY\_ID  &       \\ \hline
+giveplayer  & treasure & TRSR\_ID &       \\ \hline
+putplayer   & ROOM\_ID &          &       \\ \hline
+putkey      & KEY\_ID  & ROOM\_ID &       \\ \hline
+puttreasure & TRSR\_ID & ROOM\_ID &       \\ \hline
+adddoor     & ROOM\_ID & ROOM\_ID & KEY\_ID\\ \hline
+addswitch   & 0 or 1   & ROOM\_ID &       \\ \hline
+addnpc      & ROOM\_ID & STRING   &       \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{Instructions with dependencies on Table 2}
+\begin{tabular}{ | l | l | l | l | l | l | l | }
+\hline
+Command    & Arg1     & Arg2     & Arg3   & Arg4   & Arg5   & Arg6  \\ \hline
+addgate    & ROOM\_ID & ROOM\_ID & SW\_ID & 0 or 1 &        &       \\ \hline
+addgate    & ROOM\_ID & ROOM\_ID & SW\_ID & 0 or 1 & SW\_ID & 0 or 1\\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{Instructions with dependencies on Table 3}
+\begin{tabular}{ | l | l | l | l | l | l | }
+\hline
+Command    & Arg1    & Arg2      & Arg3    & Arg4      \\ \hline
+setside    & ROOM\_ID & DIRECTION & ROOM\_ID &           \\ \hline
+setside    & door    & DOOR\_ID   & ROOM\_ID & DIRECTION \\ \hline
+setside    & gate    & GATE\_ID   & ROOM\_ID & DIRECTION \\ \hline
+\end{tabular}
+\end{table}
+
+\end{document}
