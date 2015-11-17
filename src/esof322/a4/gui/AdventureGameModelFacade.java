@@ -14,7 +14,7 @@ public class AdventureGameModelFacade implements Controller
     /**
      * The view with which the player will see the game
      */
-    private AdventureGameView gui;
+    private AdventureGameView view;
 
     /**
      * Prevent button control for events such as input
@@ -28,92 +28,21 @@ public class AdventureGameModelFacade implements Controller
 
     public AdventureGameModelFacade(AdventureGameView gui)
     {
-        this.gui = gui;
+        this.view = gui;
+        
+        messager = new Object();
     }
     
-    public AdventureGameView getView()
-    {
-        return gui;
-    }
-
-    private char command = ' ';
-    private void sendCommand(char c)
-    {
-        if (!lockCommands)
-        {
-            synchronized (messager)
-            {
-                command = c;
-                messager.notifyAll();
-            }
-        }
-    }
-
-    public void goUp()
-    {
-        sendCommand(Command.UP);
-    }
-
-    public void goDown()
-    {
-        sendCommand(Command.DOWN);
-    }
-
-    public void goNorth()
-    {
-        sendCommand(Command.NORTH);
-    }
-
-    public void goSouth()
-    {
-        sendCommand(Command.SOUTH);
-    }
-
-    public void goEast()
-    {
-        sendCommand(Command.EAST);
-    }
-
-    public void goWest()
-    {
-        sendCommand(Command.WEST);
-    }
-
-    public void grab()
-    {
-        sendCommand(Command.GRAB);
-    }
-
-    public void drop()
-    {
-        sendCommand(Command.DROP);
-    }
-
     @Override
     public char receiveChar()
     {
-        synchronized (messager)
-        {
-            try
-            {
-                while (command == ' ')
-                {
-                    messager.wait();
-                }
-            }
-            catch (InterruptedException e){}
-        }
-        char received = command;
-        command = ' ';
-        return received;
+        return view.receiveChar();
     }
-
-
 
     @Override
     public int chooseBetween(String subject, String[] options)
     {
-        return gui.getChoice(subject, options);
+        return view.getChoice(subject, options);
     }
 
     @Override
@@ -122,30 +51,30 @@ public class AdventureGameModelFacade implements Controller
     @Override
     public void showStatusMessage(String message)
     {
-        gui.setStatusMessage(message);
+        view.setStatusMessage(message);
     }
 
     @Override
     public void showRoomDescription(String description)
     {
-        gui.setRoomDescription(description);
+        view.setRoomDescription(description);
     }
 
     @Override
     public void showRoomContents(String[] contents)
     {
-        gui.setRoomContents(contents);
+        view.setRoomContents(contents);
     }
 
     @Override
     public void showRoomInteractables(String[] interactables)
     {
-        gui.setInteractables(interactables);
+        view.setInteractables(interactables);
     }
 
     @Override
     public void showPlayerInventory(String[] inventory)
     {
-        gui.setInventory(inventory);
+        view.setInventory(inventory);
     }
 }

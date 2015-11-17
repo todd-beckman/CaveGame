@@ -16,8 +16,8 @@ public class Level0Factory implements Factory
     public String getStartMessage()
     {
         return "Welcome to the Adventure Game,\n"
-                + "which is inspired by an old game called the Colossal Cave Adventure.\n"
-                + "Java implementation Copyright (c) 1999 - 2012 by James M. Bieman\n";
+                + "which is inspired by an old game called\n"
+                + "the Colossal Cave Adventure.\n";
     }
     
     @Override

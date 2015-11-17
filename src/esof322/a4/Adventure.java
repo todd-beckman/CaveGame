@@ -217,6 +217,10 @@ public class Adventure
     {
         StringBuilder sb = new StringBuilder();
         
+        sb.append("addtreasure:");
+        sb.append(treasure.getDesc());
+        sb.append("\n");
+        
         for (Room room: rooms)
         {
             sb.append("addroom:");
